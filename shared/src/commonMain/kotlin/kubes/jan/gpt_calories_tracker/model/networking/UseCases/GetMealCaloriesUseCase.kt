@@ -1,6 +1,6 @@
 package kubes.jan.gpt_calories_tracker.model.networking.UseCases
 
-import kotlinx.coroutines.runBlocking
+import kubes.jan.gpt_calories_tracker.database.entity.MealCaloriesDesc
 import kubes.jan.gpt_calories_tracker.model.networking.MyHttpClient
 
 class GetMealCaloriesUseCase {

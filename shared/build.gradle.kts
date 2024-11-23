@@ -8,6 +8,7 @@ plugins {
     alias(libs.plugins.skie)
 
     alias(libs.plugins.kotlinx.serialization)
+    alias(libs.plugins.sqldelight)
 }
 
 kotlin {
@@ -39,14 +40,19 @@ kotlin {
             implementation(libs.ktor.client.core)
             implementation(libs.ktor.client.content.negotiation)
             implementation(libs.ktor.serialization.kotlinx.json)
+            implementation(libs.kotlinx.datetime)
         }
 
         androidMain.dependencies {
             implementation(libs.ktor.client.okhttp)
+
+            implementation(libs.android.driver)
         }
 
         iosMain.dependencies {
             implementation(libs.ktor.client.darwin)
+
+            implementation(libs.native.driver)
         }
     }
 }
@@ -72,3 +78,12 @@ skie {
         enableSwiftUIObservingPreview = true
     }
 }
+
+sqldelight {
+    databases {
+        create("AppDatabase") {
+            packageName.set("kubes.jan.gpt_calories_tracker.cache")
+        }
+    }
+}
+

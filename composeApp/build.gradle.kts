@@ -52,7 +52,10 @@ android {
         resources {
             excludes += "/META-INF/{AL2.0,LGPL2.1}"
         }
+        resources.excludes.add("META-INF/versions/9/OSGI-INF/MANIFEST.MF")
     }
+
+
     buildTypes {
         getByName("release") {
             isMinifyEnabled = false
@@ -61,6 +64,14 @@ android {
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_11
         targetCompatibility = JavaVersion.VERSION_11
+    }
+
+    packagingOptions {
+        resources {
+            excludes += "/META-INF/{AL2.0,LGPL2.1}"
+            merges += "META-INF/LICENSE.md"
+            merges += "META-INF/LICENSE-notice.md"
+        }
     }
 }
 

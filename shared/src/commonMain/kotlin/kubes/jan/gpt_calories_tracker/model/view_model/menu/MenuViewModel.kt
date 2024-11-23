@@ -3,13 +3,18 @@ package kubes.jan.gpt_calories_tracker.model.view_model.menu
 import androidx.lifecycle.ViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kubes.jan.gpt_calories_tracker.model.networking.UseCases.GetMealCaloriesUseCase
-import kubes.jan.gpt_calories_tracker.model.networking.UseCases.MealCaloriesDesc
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.launch
+import kubes.jan.gpt_calories_tracker.cache.Database
+import kubes.jan.gpt_calories_tracker.database.entity.MealCaloriesDesc
 
-class MenuViewModel() : ViewModel() {
+class MenuViewModel(private val database: Database) : ViewModel() {
     val menuViewModelState: MutableStateFlow<MenuViewState> = MutableStateFlow(MenuViewState(
         emptyList(), ""))
+
+    init {
+        menuViewModelState.value = menuViewModelState.value.copy(meals = database.getAllMeals())
+    }
 
     // Get the current current view state to used in processUserIntents
     private fun currentViewState(): MenuViewState {
@@ -29,6 +34,7 @@ class MenuViewModel() : ViewModel() {
     }
 
     private fun addNewMealToTheList(meal: MealCaloriesDesc) {
+        database.insertMeal(meal)
         menuViewModelState.value = menuViewModelState.value.copy(meals = menuViewModelState.value.meals + meal,)
     }
 
@@ -46,7 +52,7 @@ class MenuViewModel() : ViewModel() {
         var totalCalories = 0
 
         menuViewModelState.value.meals.forEach { x ->
-            totalCalories += x.calories
+            totalCalories += x.totalCalories
         }
 
         return totalCalories

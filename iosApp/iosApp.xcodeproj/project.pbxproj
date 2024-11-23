@@ -12,6 +12,7 @@
 		2152FB042600AC8F00CF470E /* iOSApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2152FB032600AC8F00CF470E /* iOSApp.swift */; };
 		7555FF83242A565900829871 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7555FF82242A565900829871 /* ContentView.swift */; };
 		EA511B3D2CE00DC20047C08D /* CalorieItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = EA511B3C2CE00DBB0047C08D /* CalorieItem.swift */; };
+		EAA242A62CF28785000B2675 /* MenuVMWrapper.swift in Sources */ = {isa = PBXBuildFile; fileRef = EAA242A52CF2877F000B2675 /* MenuVMWrapper.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -23,6 +24,7 @@
 		7555FF8C242A565B00829871 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		AB3632DC29227652001CCB65 /* Config.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = Config.xcconfig; sourceTree = "<group>"; };
 		EA511B3C2CE00DBB0047C08D /* CalorieItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CalorieItem.swift; sourceTree = "<group>"; };
+		EAA242A52CF2877F000B2675 /* MenuVMWrapper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MenuVMWrapper.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -72,6 +74,7 @@
 		7555FF7D242A565900829871 /* iosApp */ = {
 			isa = PBXGroup;
 			children = (
+				EAA242A52CF2877F000B2675 /* MenuVMWrapper.swift */,
 				EA511B3C2CE00DBB0047C08D /* CalorieItem.swift */,
 				058557BA273AAA24004C7B11 /* Assets.xcassets */,
 				7555FF82242A565900829871 /* ContentView.swift */,
@@ -190,6 +193,7 @@
 				EA511B3D2CE00DC20047C08D /* CalorieItem.swift in Sources */,
 				2152FB042600AC8F00CF470E /* iOSApp.swift in Sources */,
 				7555FF83242A565900829871 /* ContentView.swift in Sources */,
+				EAA242A62CF28785000B2675 /* MenuVMWrapper.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -335,6 +339,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
+				"OTHER_LDFLAGS[arch=*]" = "-lsqlite3";
 				PRODUCT_BUNDLE_IDENTIFIER = "${BUNDLE_ID}${TEAM_ID}";
 				"PRODUCT_BUNDLE_IDENTIFIER[sdk=iphoneos*]" = "kubes.jan.calories-tracker";
 				PRODUCT_NAME = "${APP_NAME}";

@@ -6,22 +6,30 @@ struct ContentView: View {
     @State private var isKeyboardVisible = false
     @FocusState private var isTextFieldFocused: Bool
     
-    @State var viewModel = MenuViewModel()
+    // Create the driver and database
+    private let driverFactory = DriverFactory()
+    private let db: Database
+    
+    // Initialize the view model
+    @State private var viewModel: MenuViewModel
+    
+    init() {
+        self.db = Database(databaseDriverFactory: driverFactory)
+        self._viewModel = State(initialValue: MenuViewModel(database: db))
+    }
     
     var body: some View {
         if #available(iOS 16.0, *) {
             NavigationSplitView {
                 VStack {
-                    Observing (viewModel.menuViewModelState) {state in
-                        
+                    Observing(viewModel.menuViewModelState) { state in
                         List {
-                            Observing (viewModel.menuViewModelState) {state in
-                                ForEach(state.meals, id: \.heading) { meal in
-                                    CalorieItem(title: meal.heading, subtitle: meal.description_ + " - \(meal.calories) Calories")
-                                }
+                            ForEach(state.meals, id: \.heading) { meal in
+                                CalorieItem(title: meal.heading, subtitle: meal.description_ + " - \(meal.totalCalories) Calories")
                             }
-                        }.navigationTitle("Total calories: " + String(viewModel.getTotalCalories()))
-                    }
+                        }
+                    }.navigationTitle("Total calories: " + String(viewModel.getTotalCalories()))
+
                 }.onTapGesture {
                     self.endTextEditing()
                     print("Tap gesture: " + isKeyboardVisible.description)
@@ -50,7 +58,7 @@ struct ContentView: View {
                                 newMeal = ""
                                 
                                 isTextFieldFocused = false
-                                isKeyboardVisible = false 
+                                isKeyboardVisible = false
                             }
                     }
                 } else {
@@ -67,13 +75,12 @@ struct ContentView: View {
                     }
                     .padding(.horizontal, 10)
                 }
-                
-                
-            } detail: {
-                Text("Select a Landmark")
+            }detail: {
+                Text("Hi")
             }
         } else {
             // Fallback on earlier versions
+            Text("Hello, World!")
         }
     }
     

@@ -11,24 +11,10 @@ import io.ktor.client.statement.bodyAsText
 import io.ktor.http.ContentType
 import io.ktor.http.contentType
 import io.ktor.serialization.kotlinx.json.json
-import kubes.jan.gpt_calories_tracker.model.networking.UseCases.MealCaloriesDesc
+import kotlinx.datetime.Clock
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.Json
-
-//curl -X POST "https://api.together.xyz/v1/chat/completions" \
-//-H "Authorization: Bearer $TOGETHER_API_KEY" \
-//-H "Content-Type: application/json" \
-//-d '{
-//"model": "meta-llama/Meta-Llama-3.1-405B-Instruct-Turbo",
-//"messages": [],
-//"max_tokens": null,
-//"temperature": 0.7,
-//"top_p": 0.7,
-//"top_k": 50,
-//"repetition_penalty": 1,
-//"stop": ["<|eot_id|>","<|eom_id|>"],
-//"stream": true
-//}'
+import kubes.jan.gpt_calories_tracker.database.entity.MealCaloriesDesc
 
 class MyHttpClient {
     private val client = HttpClient {
@@ -38,12 +24,14 @@ class MyHttpClient {
     }
 
     suspend fun GetCalories(mealDesc: String): Result<MealCaloriesDesc> {
+        val currentMoment = Clock.System.now().toString()
+
         val requestBody = MealRequestBody(
             model = "meta-llama/Meta-Llama-3.1-70B-Instruct-Turbo",
             messages = listOf(
                 Message(
                     role = "system",
-                    content = "This is a description of a meal I just ate: '$mealDesc' I want you to write a JSON file that contains 'heading', which is a max three word name of the meal, then 'description', this should contain how you imagine the meal and the 'calories', which is a Int which contains your prediction on how much calories the meal could have. Write ONLY the JSON file, nothing else. Start with { and end with } for proper json file."
+                    content = "This is a description of a meal I just ate: '$mealDesc' I want you to write a JSON file that contains 'heading', which is a max three word name of the meal, then 'description', this should contain how you imagine the meal and the 'total_calories', which is a Int which contains your prediction on how much calories the meal could have. Alsi, it should have 'user_description', which is going to be simply: '$mealDesc' and 'date', which is: '$currentMoment' Write ONLY the JSON file, nothing else. Start with { and end with } for proper json file."
                 )
             )
         )

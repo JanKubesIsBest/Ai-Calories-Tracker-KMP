@@ -1,0 +1,13 @@
+CREATE TABLE Meals (
+    heading TEXT NOT NULL,
+    description TEXT NOT NULL,
+    date TEXT NOT NULL,
+    user_description TEXT NOT NULL,
+    total_calories INTEGER NOT NULL
+);
+
+insertMeal:
+INSERT INTO Meals(heading, description, date, user_description, total_calories) VALUES (?, ?, ?, ?, ?);
+
+selectAllMeals:
+SELECT Meals.* FROM Meals;
