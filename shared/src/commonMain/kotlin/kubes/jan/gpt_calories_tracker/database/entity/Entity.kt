@@ -15,4 +15,6 @@ data class MealCaloriesDesc(
     val userDescription: String,
     @SerialName("total_calories")
     val totalCalories: Int,
+    @SerialName("id")
+    val id: Int,
 )

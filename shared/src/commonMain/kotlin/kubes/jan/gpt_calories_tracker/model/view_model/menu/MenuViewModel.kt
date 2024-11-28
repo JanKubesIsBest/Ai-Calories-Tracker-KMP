@@ -9,11 +9,18 @@ import kubes.jan.gpt_calories_tracker.cache.Database
 import kubes.jan.gpt_calories_tracker.database.entity.MealCaloriesDesc
 
 class MenuViewModel(private val database: Database) : ViewModel() {
-    val menuViewModelState: MutableStateFlow<MenuViewState> = MutableStateFlow(MenuViewState(
-        emptyList(), ""))
+    val menuViewModelState: MutableStateFlow<MenuViewState> = MutableStateFlow(
+        MenuViewState(
+            emptyList(),
+            "",
+            0
+        ),
+    )
 
     init {
-        menuViewModelState.value = menuViewModelState.value.copy(meals = database.getAllMeals())
+        // Init state of the database
+        val newMeals = database.getAllMeals()
+        menuViewModelState.value = menuViewModelState.value.copy(meals = newMeals, totalCalories = getTotalCalories(newMeals))
     }
 
     // Get the current current view state to used in processUserIntents
@@ -35,7 +42,7 @@ class MenuViewModel(private val database: Database) : ViewModel() {
 
     private fun addNewMealToTheList(meal: MealCaloriesDesc) {
         database.insertMeal(meal)
-        menuViewModelState.value = menuViewModelState.value.copy(meals = menuViewModelState.value.meals + meal,)
+        menuViewModelState.value = menuViewModelState.value.copy(meals = menuViewModelState.value.meals + meal, totalCalories = getTotalCalories(menuViewModelState.value.meals + meal)) // Update state of calories as well
     }
 
     private fun addNewMeal (mealDesc: String) {
@@ -48,18 +55,18 @@ class MenuViewModel(private val database: Database) : ViewModel() {
         }
     }
 
-    fun getTotalCalories(): Int {
-        var totalCalories = 0
-
-        menuViewModelState.value.meals.forEach { x ->
-            totalCalories += x.totalCalories
+    private fun getTotalCalories(meals: List<MealCaloriesDesc>): Int {
+        var _totalCalories = 0
+        
+        meals.forEach { x ->
+            _totalCalories += x.totalCalories
         }
 
-        return totalCalories
+        return _totalCalories
     }
 }
 
-data class MenuViewState(val meals: List<MealCaloriesDesc>, val mealDescription: String)
+data class MenuViewState(val meals: List<MealCaloriesDesc>, val mealDescription: String, val totalCalories: Int)
 
 sealed class MenuIntent {
     data class AddMeal(val desc: String) : MenuIntent()

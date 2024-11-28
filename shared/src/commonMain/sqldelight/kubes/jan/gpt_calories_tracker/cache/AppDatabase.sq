@@ -1,4 +1,5 @@
 CREATE TABLE Meals (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
     heading TEXT NOT NULL,
     description TEXT NOT NULL,
     date TEXT NOT NULL,

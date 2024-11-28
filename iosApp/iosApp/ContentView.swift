@@ -27,8 +27,8 @@ struct ContentView: View {
                             ForEach(state.meals, id: \.heading) { meal in
                                 CalorieItem(title: meal.heading, subtitle: meal.description_ + " - \(meal.totalCalories) Calories")
                             }
-                        }
-                    }.navigationTitle("Total calories: " + String(viewModel.getTotalCalories()))
+                        }.navigationTitle("Total calories: " + String(state.totalCalories))
+                    }
 
                 }.onTapGesture {
                     self.endTextEditing()

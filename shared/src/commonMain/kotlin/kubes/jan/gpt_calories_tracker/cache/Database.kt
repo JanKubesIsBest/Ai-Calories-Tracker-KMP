@@ -12,18 +12,20 @@ class Database(databaseDriverFactory: DriverFactory) {
     }
 
     private fun mealSelecting(
+        id: Long,
         heading: String,
         description: String,
         date: String,
         userDescription: String,
-        totalCalories: Long
+        totalCalories: Long,
     ) : MealCaloriesDesc {
         return MealCaloriesDesc(
             heading = heading,
             description = description,
             date = date,
             userDescription = userDescription,
-            totalCalories = totalCalories.toInt()
+            totalCalories = totalCalories.toInt(),
+            id = id.toInt()
         )
     }
 
