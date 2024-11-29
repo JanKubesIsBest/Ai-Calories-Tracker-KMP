@@ -21,22 +21,34 @@ struct ContentView: View {
     var body: some View {
         if #available(iOS 16.0, *) {
             NavigationSplitView {
-                VStack {
-                    Observing(viewModel.menuViewModelState) { state in
-                        List {
-                            ForEach(state.meals, id: \.heading) { meal in
-                                CalorieItem(title: meal.heading, subtitle: meal.description_ + " - \(meal.totalCalories) Calories")
-                            }
-                        }.navigationTitle("Total calories: " + String(state.totalCalories))
-                    }
+                if isKeyboardVisible {
+                    VStack {
+                        Observing(viewModel.menuViewModelState) { state in
+                            List {
+                                ForEach(state.meals, id: \.id) { meal in
+                                    CalorieItem(meal: meal)
+                                }
+                            }.navigationTitle("Total calories: " + String(state.totalCalories))
+                        }
 
-                }.onTapGesture {
-                    self.endTextEditing()
-                    print("Tap gesture: " + isKeyboardVisible.description)
-                    // If keyboard is visible
-                    if isKeyboardVisible {
+                    }
+                    .onTapGesture {
+                        self.endTextEditing()
+                        print("Tap gesture: " + isKeyboardVisible.description)
+                        // If keyboard is visible
                         isKeyboardVisible = false
                         isTextFieldFocused = false
+                    }
+                } else {
+                    VStack {
+                        Observing(viewModel.menuViewModelState) { state in
+                            List {
+                                ForEach(state.meals, id: \.heading) { meal in
+                                    CalorieItem(meal: meal)
+                                }
+                            }.navigationTitle("Total calories: " + String(state.totalCalories))
+                        }
+
                     }
                 }
                 
@@ -75,7 +87,7 @@ struct ContentView: View {
                     }
                     .padding(.horizontal, 10)
                 }
-            }detail: {
+            } detail: {
                 Text("Hi")
             }
         } else {

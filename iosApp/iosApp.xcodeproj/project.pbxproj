@@ -12,6 +12,7 @@
 		2152FB042600AC8F00CF470E /* iOSApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2152FB032600AC8F00CF470E /* iOSApp.swift */; };
 		7555FF83242A565900829871 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7555FF82242A565900829871 /* ContentView.swift */; };
 		EA511B3D2CE00DC20047C08D /* CalorieItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = EA511B3C2CE00DBB0047C08D /* CalorieItem.swift */; };
+		EAA1DABC2CFA2D3800FCBBAA /* CalorieDetail.swift in Sources */ = {isa = PBXBuildFile; fileRef = EAA1DABB2CFA2D3300FCBBAA /* CalorieDetail.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -23,6 +24,7 @@
 		7555FF8C242A565B00829871 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		AB3632DC29227652001CCB65 /* Config.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = Config.xcconfig; sourceTree = "<group>"; };
 		EA511B3C2CE00DBB0047C08D /* CalorieItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CalorieItem.swift; sourceTree = "<group>"; };
+		EAA1DABB2CFA2D3300FCBBAA /* CalorieDetail.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CalorieDetail.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -72,6 +74,7 @@
 		7555FF7D242A565900829871 /* iosApp */ = {
 			isa = PBXGroup;
 			children = (
+				EAA1DAB82CFA2D1500FCBBAA /* pages */,
 				EA511B3C2CE00DBB0047C08D /* CalorieItem.swift */,
 				058557BA273AAA24004C7B11 /* Assets.xcassets */,
 				7555FF82242A565900829871 /* ContentView.swift */,
@@ -88,6 +91,30 @@
 				AB3632DC29227652001CCB65 /* Config.xcconfig */,
 			);
 			path = Configuration;
+			sourceTree = "<group>";
+		};
+		EAA1DAB82CFA2D1500FCBBAA /* pages */ = {
+			isa = PBXGroup;
+			children = (
+				EAA1DAB92CFA2D1B00FCBBAA /* menu */,
+			);
+			path = pages;
+			sourceTree = "<group>";
+		};
+		EAA1DAB92CFA2D1B00FCBBAA /* menu */ = {
+			isa = PBXGroup;
+			children = (
+				EAA1DABA2CFA2D1F00FCBBAA /* detailMeal */,
+			);
+			path = menu;
+			sourceTree = "<group>";
+		};
+		EAA1DABA2CFA2D1F00FCBBAA /* detailMeal */ = {
+			isa = PBXGroup;
+			children = (
+				EAA1DABB2CFA2D3300FCBBAA /* CalorieDetail.swift */,
+			);
+			path = detailMeal;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -187,6 +214,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				EAA1DABC2CFA2D3800FCBBAA /* CalorieDetail.swift in Sources */,
 				EA511B3D2CE00DC20047C08D /* CalorieItem.swift in Sources */,
 				2152FB042600AC8F00CF470E /* iOSApp.swift in Sources */,
 				7555FF83242A565900829871 /* ContentView.swift in Sources */,

@@ -53,7 +53,11 @@ class MenuViewModel(private val database: Database) : ViewModel() {
         database.insertMeal(databaseMeal)
         val newMeal = databaseMeal.copy(id = database.lastInsertedRowId())
 
-        menuViewModelState.value = menuViewModelState.value.copy(meals = menuViewModelState.value.meals + newMeal, totalCalories = getTotalCalories(menuViewModelState.value.meals + newMeal)) // Update state of calories as well
+        menuViewModelState.value = menuViewModelState.value.copy(
+            meals = menuViewModelState.value.meals + newMeal,
+            totalCalories = getTotalCalories(menuViewModelState.value.meals + newMeal
+            )
+        ) // Update state of calories as well
     }
 
     private fun addNewMeal (mealDesc: String) {
