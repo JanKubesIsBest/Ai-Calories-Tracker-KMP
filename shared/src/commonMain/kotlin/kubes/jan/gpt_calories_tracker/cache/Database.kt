@@ -32,4 +32,8 @@ class Database(databaseDriverFactory: DriverFactory) {
     internal fun insertMeal(mealCaloriesDesc: MealCaloriesDesc) {
         dbQuery.insertMeal(heading = mealCaloriesDesc.heading, description = mealCaloriesDesc.description, date = mealCaloriesDesc.date, user_description = mealCaloriesDesc.userDescription, total_calories = mealCaloriesDesc.totalCalories.toLong())
     }
+
+    internal fun lastInsertedRowId(): Int {
+        return dbQuery.lastInsertRowId().executeAsOne().toInt()
+    }
 }

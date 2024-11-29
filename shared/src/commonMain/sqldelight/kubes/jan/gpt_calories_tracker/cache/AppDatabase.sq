@@ -1,5 +1,5 @@
 CREATE TABLE Meals (
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
     heading TEXT NOT NULL,
     description TEXT NOT NULL,
     date TEXT NOT NULL,
@@ -12,3 +12,7 @@ INSERT INTO Meals(heading, description, date, user_description, total_calories) 
 
 selectAllMeals:
 SELECT Meals.* FROM Meals;
+
+lastInsertRowId:
+SELECT last_insert_rowid()
+;

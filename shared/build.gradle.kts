@@ -66,10 +66,6 @@ android {
         minSdk = libs.versions.android.minSdk.get().toInt()
     }
 }
-dependencies {
-    implementation(libs.identity.jvm)
-    implementation(libs.androidx.ui.android)
-}
 
 skie {
     features {

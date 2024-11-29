@@ -15,6 +15,7 @@ import kotlinx.datetime.Clock
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.Json
 import kubes.jan.gpt_calories_tracker.database.entity.MealCaloriesDesc
+import kubes.jan.gpt_calories_tracker.database.entity.MealCaloriesDescGPT
 
 class MyHttpClient {
     private val client = HttpClient {
@@ -23,7 +24,7 @@ class MyHttpClient {
         }
     }
 
-    suspend fun GetCalories(mealDesc: String): Result<MealCaloriesDesc> {
+    suspend fun GetCalories(mealDesc: String): Result<MealCaloriesDescGPT> {
         val currentMoment = Clock.System.now().toString()
 
         val requestBody = MealRequestBody(
@@ -55,7 +56,7 @@ class MyHttpClient {
 
         val contentJson = topLevelResponse.choices.first().message.content.trim('`', '\n')
 
-        val mealCaloriesDesc = Json.decodeFromString<MealCaloriesDesc>(contentJson)
+        val mealCaloriesDesc = Json.decodeFromString<MealCaloriesDescGPT>(contentJson)
 
         return Result.success(
             mealCaloriesDesc

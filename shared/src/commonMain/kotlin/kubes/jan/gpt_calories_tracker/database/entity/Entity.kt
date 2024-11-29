@@ -5,6 +5,8 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class MealCaloriesDesc(
+    @SerialName("id")
+    val id: Int,
     @SerialName("heading")
     val heading: String,
     @SerialName("description")
@@ -15,6 +17,18 @@ data class MealCaloriesDesc(
     val userDescription: String,
     @SerialName("total_calories")
     val totalCalories: Int,
-    @SerialName("id")
-    val id: Int,
+)
+
+@Serializable
+data class MealCaloriesDescGPT(
+    @SerialName("heading")
+    val heading: String,
+    @SerialName("description")
+    val description: String,
+    @SerialName("date")
+    val date: String,
+    @SerialName("user_description")
+    val userDescription: String,
+    @SerialName("total_calories")
+    val totalCalories: Int,
 )

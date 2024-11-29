@@ -7,6 +7,7 @@ import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.launch
 import kubes.jan.gpt_calories_tracker.cache.Database
 import kubes.jan.gpt_calories_tracker.database.entity.MealCaloriesDesc
+import kubes.jan.gpt_calories_tracker.database.entity.MealCaloriesDescGPT
 
 class MenuViewModel(private val database: Database) : ViewModel() {
     val menuViewModelState: MutableStateFlow<MenuViewState> = MutableStateFlow(
@@ -40,9 +41,19 @@ class MenuViewModel(private val database: Database) : ViewModel() {
         }
     }
 
-    private fun addNewMealToTheList(meal: MealCaloriesDesc) {
-        database.insertMeal(meal)
-        menuViewModelState.value = menuViewModelState.value.copy(meals = menuViewModelState.value.meals + meal, totalCalories = getTotalCalories(menuViewModelState.value.meals + meal)) // Update state of calories as well
+    private fun addNewMealToTheList(meal: MealCaloriesDescGPT) {
+        val databaseMeal: MealCaloriesDesc = MealCaloriesDesc(
+            id = 0,
+            heading = meal.heading,
+            date = meal.date,
+            description = meal.description,
+            totalCalories = meal.totalCalories,
+            userDescription = meal.userDescription
+        )
+        database.insertMeal(databaseMeal)
+        val newMeal = databaseMeal.copy(id = database.lastInsertedRowId())
+
+        menuViewModelState.value = menuViewModelState.value.copy(meals = menuViewModelState.value.meals + newMeal, totalCalories = getTotalCalories(menuViewModelState.value.meals + newMeal)) // Update state of calories as well
     }
 
     private fun addNewMeal (mealDesc: String) {
