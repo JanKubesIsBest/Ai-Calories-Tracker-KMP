@@ -16,3 +16,7 @@ SELECT Meals.* FROM Meals;
 lastInsertRowId:
 SELECT last_insert_rowid()
 ;
+
+deleteMealById:
+DELETE FROM Meals
+WHERE id = ?;

@@ -15,7 +15,7 @@ class CaloriesDetailViewModel(private val database: Database, private val meal: 
     fun processUserIntents(userIntent: CaloriesDetailIntent) {
         when (userIntent) {
             is CaloriesDetailIntent.Delete -> {
-
+                database.deleteMealById(caloriesDetailState.value.meal.id)
             }
             /*
             * You can also handle other user intents such as GetUsers here

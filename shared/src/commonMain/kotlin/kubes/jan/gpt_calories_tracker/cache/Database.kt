@@ -36,4 +36,8 @@ class Database(databaseDriverFactory: DriverFactory) {
     internal fun lastInsertedRowId(): Int {
         return dbQuery.lastInsertRowId().executeAsOne().toInt()
     }
+
+    internal fun deleteMealById(id: Int) {
+        return dbQuery.deleteMealById(id.toLong())
+    }
 }
