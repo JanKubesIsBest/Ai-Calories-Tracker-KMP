@@ -28,7 +28,8 @@ struct ContentView: View {
                                 ForEach(state.meals, id: \.id) { meal in
                                     CalorieItem(meal: meal)
                                 }
-                            }.navigationTitle("Total calories: " + String(state.totalCalories))
+                            }
+                            .navigationTitle("Total calories: " + String(state.totalCalories))
                         }
 
                     }

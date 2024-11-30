@@ -20,8 +20,7 @@ class MenuViewModel(private val database: Database) : ViewModel() {
 
     init {
         // Init state of the database
-        val newMeals = database.getAllMeals()
-        menuViewModelState.value = menuViewModelState.value.copy(meals = newMeals, totalCalories = getTotalCalories(newMeals))
+        getAllMeals()
     }
 
     // Get the current current view state to used in processUserIntents
@@ -29,11 +28,19 @@ class MenuViewModel(private val database: Database) : ViewModel() {
         return menuViewModelState.value
     }
 
+    private fun getAllMeals() {
+        val newMeals = database.getAllMeals()
+        menuViewModelState.value = menuViewModelState.value.copy(meals = newMeals, totalCalories = getTotalCalories(newMeals))
+    }
+
     // Process the user intent from View
     fun processUserIntents(userIntent: MenuIntent) {
         when (userIntent) {
             is MenuIntent.AddMeal -> {
                 addNewMeal(userIntent.desc)
+            }
+            is MenuIntent.GetAllMeals -> {
+                getAllMeals()
             }
             /*
             * You can also handle other user intents such as GetUsers here
@@ -86,4 +93,5 @@ data class MenuViewState(val meals: List<MealCaloriesDesc>, val mealDescription:
 sealed class MenuIntent {
     data class AddMeal(val desc: String) : MenuIntent()
     // You also can other user intents such as GetUsers
+    data object GetAllMeals: MenuIntent()
 }

@@ -28,6 +28,6 @@ class CaloriesDetailViewModel(private val database: Database, private val meal: 
 data class CaloriesDetailState(val meal: MealCaloriesDesc)
 
 sealed class CaloriesDetailIntent {
-    object Delete: CaloriesDetailIntent()
+    data object Delete: CaloriesDetailIntent()
     // You also can other user intents such as GetUsers
 }

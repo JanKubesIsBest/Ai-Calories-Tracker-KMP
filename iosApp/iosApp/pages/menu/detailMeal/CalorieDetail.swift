@@ -10,9 +10,22 @@ import SwiftUI
 import Shared
 
 struct MealCaloriesDetail: View {
+    @Environment(\.dismiss) var dismiss
+    
     var meal: MealCaloriesDesc
+    
+    private let driverFactory = DriverFactory()
+    private let db: Database
+    
+    // Initialize the view model
+    @State private var viewModel: CaloriesDetailViewModel
 
-
+    init(meal: MealCaloriesDesc) {
+        self.meal = meal
+        self.db = Database(databaseDriverFactory: driverFactory)
+        self._viewModel = State(initialValue: CaloriesDetailViewModel(database: db, meal: self.meal))
+    }
+    
     var body: some View {
         List {
             Text("Description: ")
@@ -24,7 +37,8 @@ struct MealCaloriesDetail: View {
                 .foregroundColor(.primary)
             
             Button(action: {
-                
+                viewModel.processUserIntents(userIntent: CaloriesDetailIntent.Delete())
+                dismiss()
             }) {
                 Text("Delete")
             }
