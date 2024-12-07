@@ -8,8 +8,13 @@ import kotlinx.coroutines.launch
 import kubes.jan.gpt_calories_tracker.cache.Database
 import kubes.jan.gpt_calories_tracker.database.entity.MealCaloriesDesc
 import kubes.jan.gpt_calories_tracker.database.entity.MealCaloriesDescGPT
+import kubes.jan.gpt_calories_tracker.model.view_model.app_view_model.AppViewModel
+import org.koin.core.component.KoinComponent
+import org.koin.core.component.inject
 
-class MenuViewModel(private val database: Database) : ViewModel() {
+class MenuViewModel(private val database: Database) : ViewModel(), KoinComponent {
+    private val appViewModel: AppViewModel by inject()
+
     val menuViewModelState: MutableStateFlow<MenuViewState> = MutableStateFlow(
         MenuViewState(
             emptyList(),
@@ -21,6 +26,9 @@ class MenuViewModel(private val database: Database) : ViewModel() {
     init {
         // Init state of the database
         getAllMeals()
+
+        appViewModel.counter += 1
+        println(appViewModel.counter)
     }
 
     // Get the current current view state to used in processUserIntents
