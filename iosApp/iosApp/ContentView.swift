@@ -25,8 +25,10 @@ struct ContentView: View {
                     VStack {
                         Observing(viewModel.menuViewModelState) { state in
                             List {
-                                ForEach(state.meals, id: \.id) { meal in
-                                    CalorieItem(meal: meal)
+                                Section(header: Text("Meals")) {
+                                    ForEach(state.meals, id: \.id) { meal in
+                                        CalorieItem(meal: meal)
+                                    }
                                 }
                             }
                             .navigationTitle("Total calories: " + String(state.totalCalories))

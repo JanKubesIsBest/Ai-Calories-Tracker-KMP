@@ -4,16 +4,17 @@ import androidx.lifecycle.ViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kubes.jan.gpt_calories_tracker.model.networking.UseCases.GetMealCaloriesUseCase
 import androidx.lifecycle.viewModelScope
-import kotlinx.coroutines.flow.collect
-import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
+import kotlinx.datetime.Instant
 import kubes.jan.gpt_calories_tracker.cache.Database
+import kubes.jan.gpt_calories_tracker.cache.Meal
 import kubes.jan.gpt_calories_tracker.database.entity.MealCaloriesDesc
 import kubes.jan.gpt_calories_tracker.database.entity.MealCaloriesDescGPT
 import kubes.jan.gpt_calories_tracker.model.view_model.app_view_model.AppViewModel
 import kubes.jan.gpt_calories_tracker.model.view_model.app_view_model.Event
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
+import kotlin.time.Duration.Companion.minutes
 
 class MenuViewModel(private val database: Database) : ViewModel(), KoinComponent {
     private val appViewModel: AppViewModel by inject()
@@ -48,6 +49,9 @@ class MenuViewModel(private val database: Database) : ViewModel(), KoinComponent
 
     private fun getAllMeals() {
         val newMeals = database.getAllMeals()
+
+        println(groupMealsByTimeDifference(newMeals))
+
         menuViewModelState.value = menuViewModelState.value.copy(meals = newMeals, totalCalories = getTotalCalories(newMeals))
     }
 
@@ -88,7 +92,6 @@ class MenuViewModel(private val database: Database) : ViewModel(), KoinComponent
         )
         val idOfThisMeal = database.insertMeal(databaseMeal)
 
-        println("Last inserted meal id: " + idOfThisMeal)
         val newMeal = databaseMeal.copy(id = idOfThisMeal)
 
 
@@ -99,7 +102,7 @@ class MenuViewModel(private val database: Database) : ViewModel(), KoinComponent
         ) // Update state of calories as well
     }
 
-    private fun addNewMeal (mealDesc: String) {
+    private fun addNewMeal(mealDesc: String) {
         viewModelScope.launch {
             val getter = GetMealCaloriesUseCase()
 
@@ -118,6 +121,46 @@ class MenuViewModel(private val database: Database) : ViewModel(), KoinComponent
 
         return _totalCalories
     }
+
+    private fun groupMealsByTimeDifference(meals: List<MealCaloriesDesc>): List<Section> {
+        // Parse ISO 8601 timestamps and sort meals chronologically
+        val sortedMeals = meals.sortedBy { Instant.parse(it.date) }
+        val sections = mutableListOf<Section>()
+        var currentSectionMeals = mutableListOf<MealCaloriesDesc>()
+        var lastMealTime: Instant? = null
+
+        for (meal in sortedMeals) {
+            val mealTime = Instant.parse(meal.date)
+            if (lastMealTime == null || mealTime - lastMealTime >= 30.minutes) {
+                // If there's already a section, save it before starting a new one
+                if (currentSectionMeals.isNotEmpty()) {
+                    sections.add(
+                        Section(
+                            meals = currentSectionMeals.toList(),
+                            sectionName = "Section ${sections.size + 1}"
+                        )
+                    )
+                    currentSectionMeals.clear()
+                }
+                currentSectionMeals.add(meal)
+                lastMealTime = mealTime
+            } else {
+                currentSectionMeals.add(meal)
+            }
+        }
+
+        // Add the last section if it's not empty
+        if (currentSectionMeals.isNotEmpty()) {
+            sections.add(
+                Section(
+                    meals = currentSectionMeals.toList(),
+                    sectionName = "Section ${sections.size + 1}"
+                )
+            )
+        }
+
+        return sections
+    }
 }
 
 data class MenuViewState(val meals: List<MealCaloriesDesc>, val mealDescription: String, val totalCalories: Int)
@@ -127,3 +170,5 @@ sealed class MenuIntent {
     // You also can other user intents such as GetUsers
     data object GetAllMeals: MenuIntent()
 }
+
+data class Section(val meals: List<MealCaloriesDesc>, val sectionName: String)
