@@ -28,7 +28,7 @@ class MyHttpClient {
         val currentMoment = Clock.System.now().toString()
 
         val requestBody = MealRequestBody(
-            model = "meta-llama/Meta-Llama-3.1-70B-Instruct-Turbo",
+            model = "meta-llama/Llama-3.2-11B-Vision-Instruct-Turbo", //meta-llama/Meta-Llama-3.1-70B-Instruct-Turbo
             messages = listOf(
                 Message(
                     role = "system",

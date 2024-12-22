@@ -8,7 +8,9 @@ class Database(databaseDriverFactory: DriverFactory) {
     private val dbQuery = database.appDatabaseQueries
 
     internal fun getAllMeals(): List<MealCaloriesDesc> {
-        return dbQuery.selectAllMeals(::mealSelecting).executeAsList()
+        val allMeals = dbQuery.selectAllMeals(::mealSelecting).executeAsList()
+        println(allMeals)
+        return allMeals;
     }
 
     private fun mealSelecting(
@@ -29,15 +31,14 @@ class Database(databaseDriverFactory: DriverFactory) {
         )
     }
 
-    internal fun insertMeal(mealCaloriesDesc: MealCaloriesDesc) {
-        dbQuery.insertMeal(heading = mealCaloriesDesc.heading, description = mealCaloriesDesc.description, date = mealCaloriesDesc.date, user_description = mealCaloriesDesc.userDescription, total_calories = mealCaloriesDesc.totalCalories.toLong())
-    }
-
-    internal fun lastInsertedRowId(): Int {
-        return dbQuery.lastInsertRowId().executeAsOne().toInt()
+    internal fun insertMeal(mealCaloriesDesc: MealCaloriesDesc): Int {
+        return dbQuery.transactionWithResult {
+            dbQuery.insertMeal(heading = mealCaloriesDesc.heading, description = mealCaloriesDesc.description, date = mealCaloriesDesc.date, user_description = mealCaloriesDesc.userDescription, total_calories = mealCaloriesDesc.totalCalories.toLong())
+            dbQuery.lastInsertRowId().executeAsOne().toInt()
+        }
     }
 
     internal fun deleteMealById(id: Int) {
-        return dbQuery.deleteMealById(id.toLong())
+        println(dbQuery.deleteMealById(id.toLong()))
     }
 }

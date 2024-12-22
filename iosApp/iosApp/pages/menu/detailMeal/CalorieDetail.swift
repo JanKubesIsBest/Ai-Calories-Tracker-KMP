@@ -37,8 +37,9 @@ struct MealCaloriesDetail: View {
                 .foregroundColor(.primary)
             
             Button(action: {
-                viewModel.processUserIntents(userIntent: CaloriesDetailIntent.Delete())
                 dismiss()
+                print("Dismissing")
+                viewModel.processUserIntents(userIntent: CaloriesDetailIntent.Delete())
             }) {
                 Text("Delete")
             }

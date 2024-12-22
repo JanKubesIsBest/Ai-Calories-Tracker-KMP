@@ -16,8 +16,6 @@ struct ContentView: View {
     init() {
         self.db = Database(databaseDriverFactory: driverFactory)
         self._viewModel = State(initialValue: MenuViewModel(database: db))
-        
-        
     }
     
     var body: some View {
