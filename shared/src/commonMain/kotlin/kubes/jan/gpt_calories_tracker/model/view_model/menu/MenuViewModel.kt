@@ -126,7 +126,7 @@ class MenuViewModel(private val database: Database) : ViewModel(), KoinComponent
         // Parse ISO 8601 timestamps and sort meals chronologically
         val sortedMeals = meals.sortedBy { Instant.parse(it.date) }
         val sections = mutableListOf<Section>()
-        var currentSectionMeals = mutableListOf<MealCaloriesDesc>()
+        val currentSectionMeals = mutableListOf<MealCaloriesDesc>()
         var lastMealTime: Instant? = null
 
         for (meal in sortedMeals) {
