@@ -8,9 +8,9 @@ class Database(databaseDriverFactory: DriverFactory) {
     private val dbQuery = database.appDatabaseQueries
 
     internal fun getAllMeals(): List<MealCaloriesDesc> {
-        return createTestMeals()
-//        val allMeals = dbQuery.selectAllMeals(::mealSelecting).executeAsList()
-//        return allMeals;
+//        return createTestMeals()
+        val allMeals = dbQuery.selectAllMeals(::mealSelecting).executeAsList()
+        return allMeals;
     }
 
     private fun mealSelecting(
@@ -42,6 +42,8 @@ class Database(databaseDriverFactory: DriverFactory) {
         println(dbQuery.deleteMealById(id.toLong()))
     }
 }
+
+
 
 fun createTestMeals(): List<MealCaloriesDesc> {
     return listOf(

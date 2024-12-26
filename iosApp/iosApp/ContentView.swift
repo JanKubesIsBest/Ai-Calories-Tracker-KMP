@@ -24,14 +24,7 @@ struct ContentView: View {
                 if isKeyboardVisible {
                     VStack {
                         Observing(viewModel.menuViewModelState) { state in
-                            List {
-                                Section(header: Text("Meals")) {
-                                    ForEach(state.meals, id: \.id) { meal in
-                                        CalorieItem(meal: meal)
-                                    }
-                                }
-                            }
-                            .navigationTitle("Total calories: " + String(state.totalCalories))
+                            MealList(sections: state.mealSections, totalCalories: state.totalCalories)
                         }
 
                     }
@@ -45,11 +38,7 @@ struct ContentView: View {
                 } else {
                     VStack {
                         Observing(viewModel.menuViewModelState) { state in
-                            List {
-                                ForEach(state.meals, id: \.heading) { meal in
-                                    CalorieItem(meal: meal)
-                                }
-                            }.navigationTitle("Total calories: " + String(state.totalCalories))
+                            MealList(sections: state.mealSections, totalCalories: state.totalCalories)
                         }
 
                     }
@@ -112,5 +101,32 @@ extension View {
 struct ContentView_Previews: PreviewProvider {
     static var previews: some View {
         ContentView()
+    }
+}
+
+
+struct MealList: View {
+    var sections: [MealSection]
+    var totalCalories: Int32
+    
+    init (sections: [MealSection], totalCalories: Int32) {
+        self.sections = sections
+        self.totalCalories = totalCalories
+    }
+    
+    var body: some View {
+        List {
+            ForEach(sections, id: \.self) { timeSection in
+                Section(header: Text(timeSection.sectionName)) {
+                    ForEach(timeSection.meals, id: \.id) { meal in
+                        if #available(iOS 16.0, *) {
+                            CalorieItem(meal: meal)
+                        } else {
+                            // Fallback on earlier versions
+                        }
+                    }
+                }
+            }
+        }.navigationTitle("Total calories: " + String(totalCalories))
     }
 }
