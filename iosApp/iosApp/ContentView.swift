@@ -117,7 +117,10 @@ struct MealList: View {
     var body: some View {
         List {
             ForEach(sections, id: \.self) { timeSection in
-                Section(header: Text(timeSection.sectionName)) {
+                Section(
+                    header: Text(timeSection.sectionName)
+                        .headerProminence(.increased)
+                ) {
                     ForEach(timeSection.meals, id: \.id) { meal in
                         if #available(iOS 16.0, *) {
                             CalorieItem(meal: meal)
@@ -127,6 +130,7 @@ struct MealList: View {
                     }
                 }
             }
-        }.navigationTitle("Total calories: " + String(totalCalories))
+        }
+        .navigationTitle("Total calories: " + String(totalCalories))
     }
 }
