@@ -2,6 +2,22 @@ import SwiftUI
 import Shared
 
 struct ContentView: View {
+    let days = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"]
+
+    var body: some View {
+        TabView {
+            ForEach(days, id: \.self) { day in
+                VStack {
+                    DayMealsView()
+                }
+            }
+        }
+        .tabViewStyle(PageTabViewStyle(indexDisplayMode: .never)) // Make it swipeable
+        
+    }
+}
+
+struct DayMealsView: View {
     @State private var newMeal: String = ""
     @State private var isKeyboardVisible = false
     @FocusState private var isTextFieldFocused: Bool
@@ -20,7 +36,7 @@ struct ContentView: View {
     
     var body: some View {
         if #available(iOS 16.0, *) {
-            NavigationSplitView {
+            NavigationView {
                 if isKeyboardVisible {
                     VStack {
                         Observing(viewModel.menuViewModelState) { state in
@@ -79,8 +95,6 @@ struct ContentView: View {
                     }
                     .padding(.horizontal, 10)
                 }
-            } detail: {
-                Text("Hi")
             }
         } else {
             // Fallback on earlier versions
