@@ -105,9 +105,12 @@ struct ContentView_Previews: PreviewProvider {
 }
 
 
+@available(iOS 16.0, *)
 struct MealList: View {
     var sections: [MealSection]
     var totalCalories: Int32
+    
+    @State private var path = NavigationPath()
     
     init (sections: [MealSection], totalCalories: Int32) {
         self.sections = sections
@@ -115,22 +118,26 @@ struct MealList: View {
     }
     
     var body: some View {
-        List {
-            ForEach(sections, id: \.self) { timeSection in
-                Section(
-                    header: Text(timeSection.sectionName)
-                        .headerProminence(.increased)
-                ) {
-                    ForEach(timeSection.meals, id: \.id) { meal in
-                        if #available(iOS 16.0, *) {
-                            CalorieItem(meal: meal)
-                        } else {
-                            // Fallback on earlier versions
+        NavigationStack(path: $path) {
+            List {
+                ForEach(sections, id: \.self) { timeSection in
+                    Section(
+                        header: Text(timeSection.sectionName)
+                            .headerProminence(.increased)
+                    ) {
+                        ForEach(timeSection.meals, id: \.id) { meal in
+                            if #available(iOS 16.0, *) {
+                                NavigationLink(destination: MealCaloriesDetail(meal: meal)) {
+                                    CalorieItem(meal: meal)
+                                }
+                            } else {
+                                // Fallback on earlier versions
+                            }
                         }
                     }
                 }
             }
+            .navigationTitle("Total calories: " + String(totalCalories))
         }
-        .navigationTitle("Total calories: " + String(totalCalories))
     }
 }
