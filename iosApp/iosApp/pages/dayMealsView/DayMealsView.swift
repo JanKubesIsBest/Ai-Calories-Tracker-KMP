@@ -1,22 +1,6 @@
 import SwiftUI
 import Shared
 
-struct ContentView: View {
-    let days = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"]
-
-    var body: some View {
-        TabView {
-            ForEach(days, id: \.self) { day in
-                VStack {
-                    DayMealsView()
-                }
-            }
-        }
-        .tabViewStyle(PageTabViewStyle(indexDisplayMode: .never)) // Make it swipeable
-        
-    }
-}
-
 struct DayMealsView: View {
     @State private var newMeal: String = ""
     @State private var isKeyboardVisible = false
@@ -42,7 +26,6 @@ struct DayMealsView: View {
                         Observing(viewModel.menuViewModelState) { state in
                             MealList(sections: state.mealSections, totalCalories: state.totalCalories)
                         }
-
                     }
                     .onTapGesture {
                         self.endTextEditing()
@@ -109,13 +92,6 @@ extension View {
     UIApplication.shared.sendAction(#selector(UIResponder.resignFirstResponder),
                                     to: nil, from: nil, for: nil)
   }
-}
-
-
-struct ContentView_Previews: PreviewProvider {
-    static var previews: some View {
-        ContentView()
-    }
 }
 
 
