@@ -21,20 +21,27 @@ struct DayMealsView: View {
     var body: some View {
         if #available(iOS 16.0, *) {
             
-            VStack {
-                Observing(viewModel.mealsInDayState) { state in
-                    MealList(sections: state.mealSections)
+            if isKeyboardVisible {
+                VStack {
+                    Observing(viewModel.mealsInDayState) { state in
+                        MealList(sections: state.mealSections)
+                    }
                 }
-            }
-            .navigationTitle("Total Calories: " + String(viewModel.mealsInDayState.value.totalCalories))
-            .onTapGesture {
-                if (isKeyboardVisible) {
+                .navigationTitle("Total Calories: " + String(viewModel.mealsInDayState.value.totalCalories))
+                .onTapGesture {
                     self.endTextEditing()
                     print("Tap gesture: " + isKeyboardVisible.description)
                     // If keyboard is visible
                     isKeyboardVisible = false
                     isTextFieldFocused = false
                 }
+            } else {
+                VStack {
+                    Observing(viewModel.mealsInDayState) { state in
+                        MealList(sections: state.mealSections)
+                    }
+                }
+                .navigationTitle("Total Calories: " + String(viewModel.mealsInDayState.value.totalCalories))
             }
             
             if isKeyboardVisible {
@@ -104,6 +111,7 @@ struct MealList: View {
                 .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .center)
         } else {
             List {
+
                 ForEach(sections, id: \.self) { timeSection in
                     Section(
                         header: Text(timeSection.sectionName)
