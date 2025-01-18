@@ -20,62 +20,57 @@ struct DayMealsView: View {
     
     var body: some View {
         if #available(iOS 16.0, *) {
-                if isKeyboardVisible {
-                    VStack {
-                        Observing(viewModel.mealsInDayState) { state in
-                            MealList(sections: state.mealSections, totalCalories: state.totalCalories)
-                        }
-                    }
-                    .onTapGesture {
-                        self.endTextEditing()
-                        print("Tap gesture: " + isKeyboardVisible.description)
-                        // If keyboard is visible
-                        isKeyboardVisible = false
-                        isTextFieldFocused = false
-                    }
-                } else {
-                    VStack {
-                        Observing(viewModel.mealsInDayState) { state in
-                            MealList(sections: state.mealSections, totalCalories: state.totalCalories)
-                        }
-
-                    }
+            
+            VStack {
+                Observing(viewModel.mealsInDayState) { state in
+                    MealList(sections: state.mealSections)
                 }
-                
-                if isKeyboardVisible {
-                    VStack {
-                        TextField("Enter text", text: $newMeal)
-                            .padding()
-                            .textFieldStyle(RoundedBorderTextFieldStyle()) // Apply a rounded border
-                            .background(Color.clear) // Clear background for the text field
-                            .cornerRadius(8) // Optional: rounded corners
-                            .focused($isTextFieldFocused) // Bind focus state to the TextField
-                            .submitLabel(.done)
-                            .onAppear {
-                                // Automatically focus the TextField when it appears
-                                isTextFieldFocused = true
-                            }
-                            .onSubmit {
-                                viewModel.processUserIntents(userIntent: MealsInDayIntent.AddMeal(desc: newMeal))
-                                newMeal = ""
-                                
-                                isTextFieldFocused = false
-                                isKeyboardVisible = false
-                            }
-                    }
-                } else {
-                    Button(action: {
-                        isKeyboardVisible = true
-                    }) {
-                        Text("New Meal")
-                            .padding()
-                            .frame(maxWidth: .infinity)
-                            .background(Color.blue)
-                            .foregroundColor(.white)
-                            .cornerRadius(8)
-                            .padding(.bottom, 20)
-                    }
-                    .padding(.horizontal, 10)
+            }
+            .navigationTitle("Total Calories: " + String(viewModel.mealsInDayState.value.totalCalories))
+            .onTapGesture {
+                if (isKeyboardVisible) {
+                    self.endTextEditing()
+                    print("Tap gesture: " + isKeyboardVisible.description)
+                    // If keyboard is visible
+                    isKeyboardVisible = false
+                    isTextFieldFocused = false
+                }
+            }
+            
+            if isKeyboardVisible {
+                VStack {
+                    TextField("Enter text", text: $newMeal)
+                        .padding()
+                        .textFieldStyle(RoundedBorderTextFieldStyle()) // Apply a rounded border
+                        .background(Color.clear) // Clear background for the text field
+                        .cornerRadius(8) // Optional: rounded corners
+                        .focused($isTextFieldFocused) // Bind focus state to the TextField
+                        .submitLabel(.done)
+                        .onAppear {
+                            // Automatically focus the TextField when it appears
+                            isTextFieldFocused = true
+                        }
+                        .onSubmit {
+                            viewModel.processUserIntents(userIntent: MealsInDayIntent.AddMeal(desc: newMeal))
+                            newMeal = ""
+                            
+                            isTextFieldFocused = false
+                            isKeyboardVisible = false
+                        }
+                }
+            } else {
+                Button(action: {
+                    isKeyboardVisible = true
+                }) {
+                    Text("New Meal")
+                        .padding()
+                        .frame(maxWidth: .infinity)
+                        .background(Color.blue)
+                        .foregroundColor(.white)
+                        .cornerRadius(8)
+                        .padding(.bottom, 20)
+                }
+                .padding(.horizontal, 10)
             }
         } else {
             // Fallback on earlier versions
@@ -86,29 +81,27 @@ struct DayMealsView: View {
 }
 
 extension View {
-  func endTextEditing() {
-    UIApplication.shared.sendAction(#selector(UIResponder.resignFirstResponder),
-                                    to: nil, from: nil, for: nil)
-  }
+    func endTextEditing() {
+        UIApplication.shared.sendAction(#selector(UIResponder.resignFirstResponder),
+                                        to: nil, from: nil, for: nil)
+    }
 }
 
 
 @available(iOS 16.0, *)
 struct MealList: View {
     var sections: [MealSection]
-    var totalCalories: Int32
     
     @State private var path = NavigationPath()
     
-    init (sections: [MealSection], totalCalories: Int32) {
+    init (sections: [MealSection]) {
         self.sections = sections
-        self.totalCalories = totalCalories
     }
     
     var body: some View {
         if (sections.count == 0) {
-            Text("Zero meals recorder for this day")
-                .navigationTitle("Total Calories: 0")
+            Text("Zero meals recorded for this day")
+                .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .center)
         } else {
             List {
                 ForEach(sections, id: \.self) { timeSection in
@@ -127,8 +120,7 @@ struct MealList: View {
                         }
                     }
                 }
-            .navigationTitle("Total calories: " + String(totalCalories))
-        }
+            }
         }
     }
 }
