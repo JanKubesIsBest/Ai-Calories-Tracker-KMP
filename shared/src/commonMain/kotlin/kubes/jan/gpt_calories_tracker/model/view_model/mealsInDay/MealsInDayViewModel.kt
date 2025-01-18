@@ -50,7 +50,7 @@ class MealsInDayViewModel(private val database: Database, private val date: Stri
     }
 
     private fun getAllMeals() {
-        val newMeals = database.getAllMeals()
+        val newMeals = database.getMealByDate(date)
 
         println(groupMealsByTimeDifference(newMeals))
 

@@ -14,9 +14,11 @@ class Database(databaseDriverFactory: DriverFactory) {
         return allMeals;
     }
 
-//    internal fun getMealByDate(date: String): List<MealCaloriesDesc> {
-//        val allMeals = dbQuery.selectMeal
-//    }
+    internal fun getMealByDate(date: String): List<MealCaloriesDesc> {
+        val meals = dbQuery.selectMealByDate(date, ::mealSelecting).executeAsList();
+
+        return meals
+    }
 
     private fun mealSelecting(
         id: Long,

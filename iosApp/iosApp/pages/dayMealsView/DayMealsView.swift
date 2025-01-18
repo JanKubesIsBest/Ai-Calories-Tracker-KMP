@@ -106,6 +106,10 @@ struct MealList: View {
     }
     
     var body: some View {
+        if (sections.count == 0) {
+            Text("Zero meals recorder for this day")
+                .navigationTitle("Total Calories: 0")
+        } else {
             List {
                 ForEach(sections, id: \.self) { timeSection in
                     Section(
@@ -124,6 +128,7 @@ struct MealList: View {
                     }
                 }
             .navigationTitle("Total calories: " + String(totalCalories))
+        }
         }
     }
 }
