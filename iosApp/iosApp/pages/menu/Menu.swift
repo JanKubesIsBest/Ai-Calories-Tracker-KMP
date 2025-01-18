@@ -11,37 +11,53 @@ import Shared
 // TODO: Create a view model on the Kotlin side which will retrieve the list of the days and assign needed data
 // You need to change a little getAllMeals funciton in Sql in order for it to retrieve only data needed for that day --> then the only change needed for the whole structure is just passing a data the the DayMealsView()...
 struct MenuView: View {
+    
+    @State private var viewModel: MenuViewModel
+    
+    init() {
+        self._viewModel = State(initialValue: MenuViewModel())
+    }
+    
     var body: some View {
         NavigationView {
             List {
-                // Top card - slightly larger
-                NavigationLink(destination: DayMealsView()) {
-                    VStack(alignment: .leading, spacing: 8) {
-                        Text("Today")
-                            .font(.largeTitle)
-                            .fontWeight(.bold)
-                        Text("This day was not very productive yet...")
-                            .font(.subheadline)
-                            .foregroundColor(.secondary)
-                    }
-                    .frame(maxWidth: .infinity, minHeight: 120, alignment: .leading) // Increased height
-                }
-
-                // Smaller cards for the rest of the list
-                ForEach(1..<5) { index in
-                    NavigationLink(destination: DayMealsView()) {
-                        VStack(alignment: .leading, spacing: 8) {
-                            Text("Day \(index)")
-                                .font(.headline)
-                            Text("This day you ate a lot of vegetables...")
-                                .font(.subheadline)
-                                .foregroundColor(.secondary)
+                // ForEach over all days in viewModel.menuState.days
+                Observing(viewModel.menuState) { state in
+                    ForEach(0..<state.days.count, id: \.self) { index in
+                        let day = state.days[index]
+                        
+                        NavigationLink(destination: DayMealsView()) {
+                            // If it's the first item (index == 0), make a bigger card
+                            if index == 0 {
+                                VStack(alignment: .leading, spacing: 8) {
+                                    Text(day.title)
+                                        .font(.largeTitle)
+                                        .fontWeight(.bold)
+                                    Text(day.description)
+                                        .font(.subheadline)
+                                        .foregroundColor(.secondary)
+                                }
+                                .frame(
+                                    maxWidth: .infinity,
+                                    minHeight: 120,
+                                    alignment: .leading
+                                )
+                            } else {
+                                // Smaller card for the rest
+                                VStack(alignment: .leading, spacing: 8) {
+                                    Text(day.title)
+                                        .font(.headline)
+                                    Text(day.description)
+                                        .font(.subheadline)
+                                        .foregroundColor(.secondary)
+                                }
+                            }
                         }
                     }
+                    .listStyle(InsetGroupedListStyle())
+                    .navigationTitle("Menu")
                 }
             }
-            .listStyle(InsetGroupedListStyle())
-            .navigationTitle("Menu")
         }
     }
 }
