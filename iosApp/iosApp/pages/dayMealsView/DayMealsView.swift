@@ -11,19 +11,18 @@ struct DayMealsView: View {
     private let db: Database
     
     // Initialize the view model
-    @State private var viewModel: MenuViewModel
+    @State private var viewModel: MealsInDayViewModel
     
     init() {
         self.db = Database(databaseDriverFactory: driverFactory)
-        self._viewModel = State(initialValue: MenuViewModel(database: db))
+        self._viewModel = State(initialValue: MealsInDayViewModel(database: db))
     }
     
     var body: some View {
         if #available(iOS 16.0, *) {
-            NavigationView {
                 if isKeyboardVisible {
                     VStack {
-                        Observing(viewModel.menuViewModelState) { state in
+                        Observing(viewModel.mealsInDayState) { state in
                             MealList(sections: state.mealSections, totalCalories: state.totalCalories)
                         }
                     }
@@ -36,7 +35,7 @@ struct DayMealsView: View {
                     }
                 } else {
                     VStack {
-                        Observing(viewModel.menuViewModelState) { state in
+                        Observing(viewModel.mealsInDayState) { state in
                             MealList(sections: state.mealSections, totalCalories: state.totalCalories)
                         }
 
@@ -57,7 +56,7 @@ struct DayMealsView: View {
                                 isTextFieldFocused = true
                             }
                             .onSubmit {
-                                viewModel.processUserIntents(userIntent: MenuIntent.AddMeal(desc: newMeal))
+                                viewModel.processUserIntents(userIntent: MealsInDayIntent.AddMeal(desc: newMeal))
                                 newMeal = ""
                                 
                                 isTextFieldFocused = false
@@ -77,7 +76,6 @@ struct DayMealsView: View {
                             .padding(.bottom, 20)
                     }
                     .padding(.horizontal, 10)
-                }
             }
         } else {
             // Fallback on earlier versions
@@ -108,7 +106,6 @@ struct MealList: View {
     }
     
     var body: some View {
-        NavigationStack(path: $path) {
             List {
                 ForEach(sections, id: \.self) { timeSection in
                     Section(
@@ -126,7 +123,6 @@ struct MealList: View {
                         }
                     }
                 }
-            }
             .navigationTitle("Total calories: " + String(totalCalories))
         }
     }
