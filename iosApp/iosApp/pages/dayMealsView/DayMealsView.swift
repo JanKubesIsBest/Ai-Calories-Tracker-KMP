@@ -13,9 +13,9 @@ struct DayMealsView: View {
     // Initialize the view model
     @State private var viewModel: MealsInDayViewModel
     
-    init() {
+    init(date: String) {
         self.db = Database(databaseDriverFactory: driverFactory)
-        self._viewModel = State(initialValue: MealsInDayViewModel(database: db))
+        self._viewModel = State(initialValue: MealsInDayViewModel(database: db, date: date))
     }
     
     var body: some View {

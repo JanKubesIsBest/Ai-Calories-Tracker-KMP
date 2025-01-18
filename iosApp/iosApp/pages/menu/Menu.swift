@@ -26,7 +26,7 @@ struct MenuView: View {
                     ForEach(0..<state.days.count, id: \.self) { index in
                         let day = state.days[index]
                         
-                        NavigationLink(destination: DayMealsView()) {
+                        NavigationLink(destination: DayMealsView(date: day.date)) {
                             // If it's the first item (index == 0), make a bigger card
                             if index == 0 {
                                 VStack(alignment: .leading, spacing: 8) {

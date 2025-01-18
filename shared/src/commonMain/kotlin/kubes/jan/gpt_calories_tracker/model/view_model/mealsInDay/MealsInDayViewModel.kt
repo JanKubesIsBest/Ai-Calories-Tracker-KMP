@@ -17,7 +17,7 @@ import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
 import kotlin.time.Duration.Companion.minutes
 
-class MealsInDayViewModel(private val database: Database) : ViewModel(), KoinComponent {
+class MealsInDayViewModel(private val database: Database, private val date: String) : ViewModel(), KoinComponent {
     private val appViewModel: AppViewModel by inject()
 
     val mealsInDayState: MutableStateFlow<MealsInDayState> = MutableStateFlow(
