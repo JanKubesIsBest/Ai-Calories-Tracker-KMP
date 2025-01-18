@@ -13,6 +13,11 @@ INSERT INTO Meals(heading, description, date, user_description, total_calories) 
 selectAllMeals:
 SELECT Meals.* FROM Meals;
 
+selectMealByDate:
+SELECT *
+FROM Meals
+WHERE DATE(date) = DATE(?);
+
 lastInsertRowId:
 SELECT last_insert_rowid()
 ;

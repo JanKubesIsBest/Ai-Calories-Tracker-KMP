@@ -373,7 +373,7 @@
 				);
 				"OTHER_LDFLAGS[arch=*]" = "-lsqlite3";
 				PRODUCT_BUNDLE_IDENTIFIER = "${BUNDLE_ID}${TEAM_ID}";
-				"PRODUCT_BUNDLE_IDENTIFIER[sdk=iphoneos*]" = "kubes.jan.calories-tracker";
+				"PRODUCT_BUNDLE_IDENTIFIER[sdk=iphoneos*]" = kubes.jan.caloriestracker;
 				PRODUCT_NAME = "${APP_NAME}";
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SWIFT_VERSION = 5.0;
@@ -402,7 +402,7 @@
 				);
 				"OTHER_LDFLAGS[arch=*]" = "-lsqlite3";
 				PRODUCT_BUNDLE_IDENTIFIER = "${BUNDLE_ID}${TEAM_ID}";
-				"PRODUCT_BUNDLE_IDENTIFIER[sdk=iphoneos*]" = "kubes.jan.calories-tracker";
+				"PRODUCT_BUNDLE_IDENTIFIER[sdk=iphoneos*]" = kubes.jan.caloriestracker;
 				PRODUCT_NAME = "${APP_NAME}";
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SWIFT_VERSION = 5.0;

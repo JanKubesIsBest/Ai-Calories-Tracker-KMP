@@ -7,11 +7,16 @@ class Database(databaseDriverFactory: DriverFactory) {
     private val database = AppDatabase(databaseDriverFactory.createDriver())
     private val dbQuery = database.appDatabaseQueries
 
+    // TODO: Add date
     internal fun getAllMeals(): List<MealCaloriesDesc> {
 //        return createTestMeals()
         val allMeals = dbQuery.selectAllMeals(::mealSelecting).executeAsList()
         return allMeals;
     }
+
+//    internal fun getMealByDate(date: String): List<MealCaloriesDesc> {
+//        val allMeals = dbQuery.selectMeal
+//    }
 
     private fun mealSelecting(
         id: Long,
