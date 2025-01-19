@@ -28,11 +28,14 @@ class MyHttpClient {
         val currentMoment = Clock.System.now().toString()
 
         val requestBody = MealRequestBody(
-            model = "meta-llama/Llama-3.2-11B-Vision-Instruct-Turbo", //meta-llama/Meta-Llama-3.1-70B-Instruct-Turbo
+            model = "meta-llama/Meta-Llama-3.1-405B-Instruct-Turbo", // meta-llama/Llama-3.2-11B-Vision-Instruct-Turbo
             messages = listOf(
                 Message(
                     role = "system",
-                    content = "This is a description of a meal I just ate: '$mealDesc' I want you to write a JSON file that contains 'heading', which is a max three word name of the meal, then 'description', this should contain how you imagine the meal and the 'total_calories', which is a Int which contains your prediction on how much calories the meal could have. Alsi, it should have 'user_description', which is going to be simply: '$mealDesc' and 'date', which is: '$currentMoment' Write ONLY the JSON file, nothing else. Start with { and end with } for proper json file."
+                    content = "This is a description of a meal I just ate: '$mealDesc' I want you to write a J" +
+                            "SON file that contains 'heading', which is a max three word name of the meal (Do not make things up, generally name things how the user named them, don't add anything yourself, The only thing you could add is the time of the day the user ate it, such as breakfast, lunch or dinner), then 'description', this should contain how you imagine the meal (again, don't make anything up. You can add few words about how you imagine it, but don't add anything specific that user did not tell you) and the 'total_calories', which is an Int which contains your prediction on how much kcal the meal could have. Also, it should have 'user_description', which is going to be simply: '$mealDesc' and 'date', which is: '$currentMoment' Write ONLY the JSON file, nothing else. Do not hallucinate. Start with { and end with } for proper json file." +
+                            "" +
+                            "You should consider the user's specific context, placing strong emphasis on the fact that they are in Czechia, where portion sizes and nutritional values may differ from other countries. The user is 17 years old and an athlete, so factor in that they are physically active but also that Czech meal portions might be smaller or different than in other regions when estimating total_calories."
                 )
             )
         )
