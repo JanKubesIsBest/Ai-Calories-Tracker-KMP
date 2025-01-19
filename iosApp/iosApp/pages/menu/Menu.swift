@@ -8,8 +8,6 @@
 import SwiftUI
 import Shared
 
-// TODO: Create a view model on the Kotlin side which will retrieve the list of the days and assign needed data
-// You need to change a little getAllMeals funciton in Sql in order for it to retrieve only data needed for that day --> then the only change needed for the whole structure is just passing a data the the DayMealsView()...
 struct MenuView: View {
     
     @State private var viewModel: MenuViewModel
@@ -23,41 +21,40 @@ struct MenuView: View {
             List {
                 // ForEach over all days in viewModel.menuState.days
                 Observing(viewModel.menuState) { state in
-                    ForEach(0..<state.days.count, id: \.self) { index in
+                    NavigationLink(destination: DayMealsView(date: state.days[0].date)) {
+                        VStack(alignment: .leading, spacing: 8) {
+                            Text(state.days[0].title)
+                                .font(.largeTitle)
+                                .fontWeight(.bold)
+                            Text(state.days[0].description)
+                                .font(.subheadline)
+                                .foregroundColor(.secondary)
+                        }
+                        .frame(
+                            maxWidth: .infinity,
+                            minHeight: 250,
+                            alignment: .topLeading
+                        )
+                    }
+                    .listRowBackground(Color.blue)
+                    
+                    ForEach(1..<state.days.count, id: \.self) { index in
                         let day = state.days[index]
                         
                         NavigationLink(destination: DayMealsView(date: day.date)) {
                             // If it's the first item (index == 0), make a bigger card
-                            if index == 0 {
-                                VStack(alignment: .leading, spacing: 8) {
-                                    Text(day.title)
-                                        .font(.largeTitle)
-                                        .fontWeight(.bold)
-                                    Text(day.description)
-                                        .font(.subheadline)
-                                        .foregroundColor(.secondary)
-                                }
-                                .frame(
-                                    maxWidth: .infinity,
-                                    minHeight: 120,
-                                    alignment: .leading
-                                )
-                            } else {
-                                // Smaller card for the rest
-                                VStack(alignment: .leading, spacing: 8) {
-                                    Text(day.title)
-                                        .font(.headline)
-                                    Text(day.description)
-                                        .font(.subheadline)
-                                        .foregroundColor(.secondary)
-                                }
+                            // Smaller card for the rest
+                            VStack(alignment: .leading, spacing: 8) {
+                                Text(day.title)
+                                    .font(.headline)
+                                Text(day.description)
+                                    .font(.subheadline)
+                                    .foregroundColor(.secondary)
                             }
                         }
                     }
-                    .listStyle(InsetGroupedListStyle())
-                    .navigationTitle("Menu")
                 }
-            }
+            }.navigationTitle("Menu")
         }
     }
 }
