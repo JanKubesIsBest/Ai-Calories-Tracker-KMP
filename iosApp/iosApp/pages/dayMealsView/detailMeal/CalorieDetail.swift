@@ -17,26 +17,35 @@ struct MealCaloriesDetail: View {
     
     // @State properties declared but not initialized here.
     @State private var viewModel: CaloriesDetailViewModel
-    @State private var totalCalories: Int32
+    
+    @State private var totalCalories: Int32 = 0
+    @State private var newHeading: String = ""
     
     init(meal: MealCaloriesDesc) {
         self.meal = meal
+        
+        // Setting the values for the edit section
+        self.newHeading = self.meal.heading
+        self.totalCalories = self.meal.totalCalories
         
         let driverFactory = DriverFactory()
         self.db = Database(databaseDriverFactory: driverFactory)
         
         // Create local temp values
         let initialViewModel = CaloriesDetailViewModel(database: db, meal: meal)
-        let initialTotalCalories = meal.totalCalories
+        
         
         // Assign them to the @State wrappers
         self._viewModel = State(initialValue: initialViewModel)
-        self._totalCalories = State(initialValue: initialTotalCalories)
     }
     
     var body: some View {
         List {
             Section {
+                Text("Heading:")
+                    .bold()
+                + Text(" \(meal.heading)")
+                
                 Text("Description:")
                     .bold()
                 + Text(" \(meal.description_)")
@@ -51,7 +60,14 @@ struct MealCaloriesDetail: View {
             }
             
             Section(header: Text("Edit meal")) {
+                TextField("Heading", text: $newHeading)
+                    .onSubmit {
+                        viewModel.processUserIntents(userIntent: CaloriesDetailIntent.EditHeading(newHeading: newHeading))
+                    }
                 TextField("Total Calories", value: $totalCalories, formatter: NumberFormatter())
+                    .onSubmit {
+                        viewModel.processUserIntents(userIntent: CaloriesDetailIntent.EditCalories(newCalories: totalCalories))
+                    }
 
                 Button(role: .destructive) {
                     dismiss()

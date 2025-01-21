@@ -30,9 +30,13 @@ class CaloriesDetailViewModel(private val database: Database, private val meal: 
                     appViewModel.postEvent(Event.DeleteEvent(meal.id))
                 }
             }
-            /*
-            * You can also handle other user intents such as GetUsers here
-            * */
+
+            is CaloriesDetailIntent.EditCalories -> {
+                println(userIntent.newCalories)
+            }
+            is CaloriesDetailIntent.EditHeading -> {
+                println(userIntent.newHeading)
+            }
         }
     }
 
@@ -59,5 +63,7 @@ data class CaloriesDetailState(val meal: MealCaloriesDesc)
 
 sealed class CaloriesDetailIntent {
     data object Delete: CaloriesDetailIntent()
-    // You also can other user intents such as GetUsers
+
+    data class EditHeading(val newHeading: String): CaloriesDetailIntent()
+    data class EditCalories(val newCalories: Int): CaloriesDetailIntent()
 }
