@@ -33,9 +33,21 @@ class CaloriesDetailViewModel(private val database: Database, private val meal: 
 
             is CaloriesDetailIntent.EditCalories -> {
                 println(userIntent.newCalories)
+
+                val newMeal = caloriesDetailState.value.meal.copy(totalCalories = userIntent.newCalories)
+
+                database.editMealById(newMeal)
+
+                caloriesDetailState.value = caloriesDetailState.value.copy(meal = newMeal)
             }
             is CaloriesDetailIntent.EditHeading -> {
                 println(userIntent.newHeading)
+
+                val newMeal = caloriesDetailState.value.meal.copy(heading = userIntent.newHeading)
+
+                database.editMealById(newMeal)
+
+                caloriesDetailState.value = caloriesDetailState.value.copy(meal = newMeal)
             }
         }
     }

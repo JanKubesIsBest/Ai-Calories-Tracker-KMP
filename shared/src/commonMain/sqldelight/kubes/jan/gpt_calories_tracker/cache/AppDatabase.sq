@@ -25,3 +25,13 @@ SELECT last_insert_rowid()
 deleteMealById:
 DELETE FROM Meals
 WHERE id = ?;
+
+updateMealById:
+UPDATE Meals
+SET
+  heading = ?,
+  description = ?,
+  date = ?,
+  user_description = ?,
+  total_calories = ?
+WHERE id = ?;

@@ -13,6 +13,10 @@ class Database(databaseDriverFactory: DriverFactory) {
         return allMeals;
     }
 
+    internal fun editMealById(meal: MealCaloriesDesc) {
+        dbQuery.updateMealById(meal.heading, meal.description, meal.date, meal.userDescription, meal.totalCalories.toLong(), meal.id.toLong())
+    }
+
     internal fun getMealByDate(date: String): List<MealCaloriesDesc> {
         val meals = dbQuery.selectMealByDate(date, ::mealSelecting).executeAsList();
 

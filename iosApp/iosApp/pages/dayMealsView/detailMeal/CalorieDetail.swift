@@ -40,44 +40,46 @@ struct MealCaloriesDetail: View {
     }
     
     var body: some View {
-        List {
-            Section {
-                Text("Heading:")
-                    .bold()
-                + Text(" \(meal.heading)")
+        Observing(viewModel.caloriesDetailState) { state in
+            List {
+                Section {
+                    Text("Heading:")
+                        .bold()
+                    + Text(" \(state.meal.heading)")
+                    
+                    Text("Description:")
+                        .bold()
+                    + Text(" \(state.meal.description_)")
+
+                    Text("Date: ")
+                        .bold()
+    //                + Text(viewModel.dateToStringFormat())
+
+                    Text("Time: ")
+                        .bold()
+    //                + Text(viewModel.timeToStringFormat())
+                }
                 
-                Text("Description:")
-                    .bold()
-                + Text(" \(meal.description_)")
+                Section(header: Text("Edit meal")) {
+                    TextField("Heading", text: $newHeading)
+                        .onSubmit {
+                            viewModel.processUserIntents(userIntent: CaloriesDetailIntent.EditHeading(newHeading: newHeading))
+                        }
+                    TextField("Total Calories", value: $totalCalories, formatter: NumberFormatter())
+                        .onSubmit {
+                            viewModel.processUserIntents(userIntent: CaloriesDetailIntent.EditCalories(newCalories: totalCalories))
+                        }
 
-                Text("Date: ")
-                    .bold()
-//                + Text(viewModel.dateToStringFormat())
-
-                Text("Time: ")
-                    .bold()
-//                + Text(viewModel.timeToStringFormat())
-            }
-            
-            Section(header: Text("Edit meal")) {
-                TextField("Heading", text: $newHeading)
-                    .onSubmit {
-                        viewModel.processUserIntents(userIntent: CaloriesDetailIntent.EditHeading(newHeading: newHeading))
+                    Button(role: .destructive) {
+                        dismiss()
+                        viewModel.processUserIntents(userIntent: CaloriesDetailIntent.Delete())
+                    } label: {
+                        Text("Delete")
+                            .foregroundStyle(.red)
                     }
-                TextField("Total Calories", value: $totalCalories, formatter: NumberFormatter())
-                    .onSubmit {
-                        viewModel.processUserIntents(userIntent: CaloriesDetailIntent.EditCalories(newCalories: totalCalories))
-                    }
-
-                Button(role: .destructive) {
-                    dismiss()
-                    viewModel.processUserIntents(userIntent: CaloriesDetailIntent.Delete())
-                } label: {
-                    Text("Delete")
-                        .foregroundStyle(.red)
                 }
             }
+            .navigationTitle(state.meal.heading)
         }
-        .navigationTitle(meal.heading)
     }
 }
