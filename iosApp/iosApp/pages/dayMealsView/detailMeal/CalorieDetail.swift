@@ -11,41 +11,57 @@ import Shared
 
 struct MealCaloriesDetail: View {
     @Environment(\.dismiss) var dismiss
-    
-    var meal: MealCaloriesDesc
-    
-    private let driverFactory = DriverFactory()
+
+    let meal: MealCaloriesDesc
     private let db: Database
     
-    // Initialize the view model
+    // @State properties declared but not initialized here.
     @State private var viewModel: CaloriesDetailViewModel
-
+    @State private var totalCalories: Int32
+    
     init(meal: MealCaloriesDesc) {
         self.meal = meal
+        
+        let driverFactory = DriverFactory()
         self.db = Database(databaseDriverFactory: driverFactory)
-        self._viewModel = State(initialValue: CaloriesDetailViewModel(database: db, meal: self.meal))
+        
+        // Create local temp values
+        let initialViewModel = CaloriesDetailViewModel(database: db, meal: meal)
+        let initialTotalCalories = meal.totalCalories
+        
+        // Assign them to the @State wrappers
+        self._viewModel = State(initialValue: initialViewModel)
+        self._totalCalories = State(initialValue: initialTotalCalories)
     }
     
     var body: some View {
         List {
-            Text("Description: ")
-                .bold()
-                .font(.body)
-                .foregroundColor(.primary) +
-            Text(meal.description_)
-                .font(.body)
-                .foregroundColor(.primary)
+            Section {
+                Text("Description:")
+                    .bold()
+                + Text(" \(meal.description_)")
+
+                Text("Date: ")
+                    .bold()
+//                + Text(viewModel.dateToStringFormat())
+
+                Text("Time: ")
+                    .bold()
+//                + Text(viewModel.timeToStringFormat())
+            }
             
-            Button(action: {
-                dismiss()
-                print("Dismissing")
-                viewModel.processUserIntents(userIntent: CaloriesDetailIntent.Delete())
-            }) {
-                Text("Delete")
+            Section(header: Text("Edit meal")) {
+                TextField("Total Calories", value: $totalCalories, formatter: NumberFormatter())
+
+                Button(role: .destructive) {
+                    dismiss()
+                    viewModel.processUserIntents(userIntent: CaloriesDetailIntent.Delete())
+                } label: {
+                    Text("Delete")
+                        .foregroundStyle(.red)
+                }
             }
         }
         .navigationTitle(meal.heading)
-        
-        
     }
 }
