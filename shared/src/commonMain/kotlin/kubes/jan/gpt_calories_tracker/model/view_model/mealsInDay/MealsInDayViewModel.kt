@@ -38,10 +38,10 @@ class MealsInDayViewModel(private val database: Database, private val date: Stri
             appViewModel.events.collect { event ->
                 println("Collected: $event")
                 when (event) {
-                    is Event.DeleteEvent -> deleteEvent(event.id)
                     Event.UpdateMeals -> {
                         getAllMeals()
                     }
+                    else -> {}
                 }
             }
         }
@@ -79,20 +79,6 @@ class MealsInDayViewModel(private val database: Database, private val date: Stri
         }
     }
 
-    private fun deleteEvent(id: Int) {
-        println("Deleting")
-        database.deleteMealById(id)
-        println("Deleted " + id.toString())
-
-        // Filters out everything that does not have that id -> removes it
-        val newList = mealsInDayState.value.meals.filter { it.id != id }
-
-        mealsInDayState.value = mealsInDayState.value.copy(
-            meals = newList,
-            mealSections = groupMealsByTimeDifference(newList),
-            totalCalories = getTotalCalories(newList),
-            )
-    }
 
     private fun addNewMealToTheList(meal: MealCaloriesDescGPT) {
         val databaseMeal: MealCaloriesDesc = MealCaloriesDesc(
@@ -114,6 +100,10 @@ class MealsInDayViewModel(private val database: Database, private val date: Stri
             totalCalories = getTotalCalories(mealsInDayState.value.meals + newMeal
             )
         ) // Update state of calories as well
+
+        viewModelScope.launch {
+            appViewModel.postEvent(Event.UpdateMeals)
+        }
     }
 
     private fun addNewMeal(mealDesc: String) {

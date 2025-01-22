@@ -22,7 +22,7 @@ struct NormalDay: View {
             VStack(alignment: .leading, spacing: 8) {
                 Text(day.title)
                     .font(.headline)
-                Text(day.description)
+                Text(day.description_)
                     .font(.subheadline)
                     .foregroundColor(.secondary)
                 + Text(" Total calories: \(day.totalCalories)")

@@ -3,11 +3,9 @@ package kubes.jan.gpt_calories_tracker.model.view_model.caloriesDetail
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import kotlinx.datetime.Instant
 import kotlinx.datetime.LocalDate
-import kotlinx.datetime.LocalDateTime
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.number
 import kotlinx.datetime.toLocalDateTime
@@ -30,6 +28,7 @@ class CaloriesDetailViewModel(private val database: Database, private val meal: 
     fun processUserIntents(userIntent: CaloriesDetailIntent) {
         when (userIntent) {
             is CaloriesDetailIntent.Delete -> {
+                deleteMeal(caloriesDetailState.value.meal.id)
                 viewModelScope.launch {
                     appViewModel.postEvent(Event.UpdateMeals)
                 }
@@ -82,6 +81,10 @@ class CaloriesDetailViewModel(private val database: Database, private val meal: 
         } else {
             return string + time.minute.toString()
         }
+    }
+
+    private fun deleteMeal(id: Int) {
+        database.deleteMealById(id)
     }
 
 }
