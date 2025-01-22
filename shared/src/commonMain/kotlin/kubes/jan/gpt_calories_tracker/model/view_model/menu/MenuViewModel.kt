@@ -63,7 +63,7 @@ class MenuViewModel(private val database: Database,) : ViewModel(), KoinComponen
             val meals = database.getMealByDate(day.date)
             val totalCalories = getTotalCalories(meals)
 
-            var newDay = day.copy(meals = meals, totalCalories = totalCalories)
+            var newDay = day.copy(meals = meals, totalCalories = totalCalories, description = "In the future, here will be description")
             newDaysList = newDaysList + newDay
         }
 
@@ -88,7 +88,7 @@ class MenuViewModel(private val database: Database,) : ViewModel(), KoinComponen
             Day(
                 date = thisDay.toString(),
                 title = title,
-                description = thisDay.toString(),
+                description = "",
                 totalCalories = 0,
                 meals = emptyList()
             )

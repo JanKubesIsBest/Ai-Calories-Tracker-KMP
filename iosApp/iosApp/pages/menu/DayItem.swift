@@ -47,7 +47,7 @@ struct TodayDay: View {
                 Text(day.title)
                     .font(.largeTitle)
                     .fontWeight(.bold)
-                Text(day.description)
+                Text(day.description_)
                     .font(.subheadline)
                     .foregroundColor(.secondary)
                 + Text(" Total calories: \(day.totalCalories)")
