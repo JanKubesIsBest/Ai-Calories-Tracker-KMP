@@ -6,7 +6,11 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import kotlinx.datetime.Instant
+import kotlinx.datetime.LocalDate
 import kotlinx.datetime.LocalDateTime
+import kotlinx.datetime.TimeZone
+import kotlinx.datetime.number
+import kotlinx.datetime.toLocalDateTime
 import kubes.jan.gpt_calories_tracker.cache.Database
 import kubes.jan.gpt_calories_tracker.database.entity.MealCaloriesDesc
 import kubes.jan.gpt_calories_tracker.model.view_model.app_view_model.AppViewModel
@@ -53,19 +57,22 @@ class CaloriesDetailViewModel(private val database: Database, private val meal: 
     }
 
     fun dateToStringFormat(): String {
-        val datetimeDate = LocalDateTime.parse(meal.date)
+        val datetimeDate = Instant.parse(caloriesDetailState.value.meal.date)
 
-        return datetimeDate.dayOfMonth.toString() + "." + datetimeDate.month.toString() + "." + datetimeDate.year.toString()
+        val date: LocalDate = datetimeDate.toLocalDateTime(TimeZone.currentSystemDefault()).date
+        return date.dayOfMonth.toString() + "." + date.month.number.toString() + "." + date.year.toString()
     }
 
     fun timeToStringFormat(): String {
-        val datetimeDate = LocalDateTime.parse(meal.date)
-        val string = datetimeDate.hour.toString() + ":"
+        val datetimeDate = Instant.parse(caloriesDetailState.value.meal.date)
+        val time = datetimeDate.toLocalDateTime(TimeZone.currentSystemDefault()).time
 
-        if (datetimeDate.minute.toString().length < 2) {
-            return string + "0" + datetimeDate.minute.toString()
+        val string = time.hour.toString() + ":"
+        println(time.minute.toString())
+        if (time.minute.toString().length < 2) {
+            return string + "0" + time.minute.toString()
         } else {
-            return string + datetimeDate.minute.toString().length
+            return string + time.minute.toString()
         }
     }
 
