@@ -20,64 +20,61 @@ struct DayMealsView: View {
     
     var body: some View {
         if #available(iOS 16.0, *) {
-            
-            if isKeyboardVisible {
-                VStack {
-                    Observing(viewModel.mealsInDayState) { state in
+            Observing(viewModel.mealsInDayState) { state in
+                if isKeyboardVisible {
+                    VStack {
                         MealList(sections: state.mealSections)
                     }
-                }
-                .navigationTitle("Total Calories: " + String(viewModel.mealsInDayState.value.totalCalories))
-                .onTapGesture {
-                    self.endTextEditing()
-                    print("Tap gesture: " + isKeyboardVisible.description)
-                    // If keyboard is visible
-                    isKeyboardVisible = false
-                    isTextFieldFocused = false
-                }
-            } else {
-                VStack {
-                    Observing(viewModel.mealsInDayState) { state in
+                    .navigationTitle("Total Calories: " + String(state.totalCalories))
+                    .onTapGesture {
+                        self.endTextEditing()
+                        print("Tap gesture: " + isKeyboardVisible.description)
+                        // If keyboard is visible
+                        isKeyboardVisible = false
+                        isTextFieldFocused = false
+                    }
+                } else {
+                    VStack {
                         MealList(sections: state.mealSections)
                     }
+                    .navigationTitle("Total Calories: " + String(state.totalCalories))
                 }
-                .navigationTitle("Total Calories: " + String(viewModel.mealsInDayState.value.totalCalories))
-            }
-            
-            if isKeyboardVisible {
-                VStack {
-                    TextField("Enter text", text: $newMeal)
-                        .padding()
-                        .textFieldStyle(RoundedBorderTextFieldStyle()) // Apply a rounded border
-                        .background(Color.clear) // Clear background for the text field
-                        .cornerRadius(8) // Optional: rounded corners
-                        .focused($isTextFieldFocused) // Bind focus state to the TextField
-                        .submitLabel(.done)
-                        .onAppear {
-                            // Automatically focus the TextField when it appears
-                            isTextFieldFocused = true
-                        }
-                        .onSubmit {
-                            viewModel.processUserIntents(userIntent: MealsInDayIntent.AddMeal(desc: newMeal))
-                            newMeal = ""
-                            
-                            isTextFieldFocused = false
-                            isKeyboardVisible = false
-                        }
+                
+                if isKeyboardVisible {
+                    VStack {
+                        TextField("Enter text", text: $newMeal)
+                            .padding()
+                            .textFieldStyle(RoundedBorderTextFieldStyle()) // Apply a rounded border
+                            .background(Color.clear) // Clear background for the text field
+                            .cornerRadius(8) // Optional: rounded corners
+                            .focused($isTextFieldFocused) // Bind focus state to the TextField
+                            .submitLabel(.done)
+                            .onAppear {
+                                // Automatically focus the TextField when it appears
+                                isTextFieldFocused = true
+                            }
+                            .onSubmit {
+                                viewModel.processUserIntents(userIntent: MealsInDayIntent.AddMeal(desc: newMeal))
+                                newMeal = ""
+                                
+                                isTextFieldFocused = false
+                                isKeyboardVisible = false
+                            }
+                    }
+                } else {
+                    Button(action: {
+                        isKeyboardVisible = true
+                    }) {
+                        Text("New Meal")
+                            .padding()
+                            .frame(maxWidth: .infinity)
+                            .background(Color.blue)
+                            .foregroundColor(.white)
+                            .cornerRadius(8)
+                            .padding(.bottom, 20)
+                    }
+                    .padding(.horizontal, 10)
                 }
-            } else {
-                Button(action: {
-                    isKeyboardVisible = true
-                }) {
-                    Text("New Meal")
-                        .padding()
-                        .frame(maxWidth: .infinity)
-                        .background(Color.blue)
-                        .foregroundColor(.white)
-                        .cornerRadius(8)
-                        .padding(.bottom, 20)
-                }
-                .padding(.horizontal, 10)
             }
         } else {
             // Fallback on earlier versions
@@ -111,7 +108,7 @@ struct MealList: View {
                 .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .center)
         } else {
             List {
-
+                
                 ForEach(sections, id: \.self) { timeSection in
                     Section(
                         header: Text(timeSection.sectionName)

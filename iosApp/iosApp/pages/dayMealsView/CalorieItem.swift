@@ -18,9 +18,12 @@ struct CalorieItem: View {
             VStack(alignment: .leading) {
                 Text(meal.heading)
                     .font(.headline)
-                Text(meal.description_ + " Total calories: \(meal.totalCalories)")
+                Text(meal.description_)
                     .font(.subheadline)
                     .foregroundColor(.secondary)
+                + Text(" Total calories: \(meal.totalCalories)")
+                    .font(.subheadline)
+                    .bold()
             }
         } else {
             // Fallback on earlier versions

@@ -53,11 +53,11 @@ struct MealCaloriesDetail: View {
 
                     Text("Date: ")
                         .bold()
-    //                + Text(viewModel.dateToStringFormat())
+                    + Text(viewModel.dateToStringFormat())
 
                     Text("Time: ")
                         .bold()
-    //                + Text(viewModel.timeToStringFormat())
+                    + Text(viewModel.timeToStringFormat())
                 }
                 
                 Section(header: Text("Edit meal")) {
