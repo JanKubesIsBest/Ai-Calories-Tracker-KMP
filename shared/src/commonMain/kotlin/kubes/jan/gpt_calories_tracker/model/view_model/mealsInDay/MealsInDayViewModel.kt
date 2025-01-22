@@ -126,16 +126,6 @@ class MealsInDayViewModel(private val database: Database, private val date: Stri
         }
     }
 
-    private fun getTotalCalories(meals: List<MealCaloriesDesc>): Int {
-        var _totalCalories = 0
-        
-        meals.forEach { x ->
-            _totalCalories += x.totalCalories
-        }
-
-        return _totalCalories
-    }
-
     private fun groupMealsByTimeDifference(meals: List<MealCaloriesDesc>): List<MealSection> {
         // Parse ISO 8601 timestamps and sort meals chronologically
         val sortedMeals = meals.sortedBy { Instant.parse(it.date) }
@@ -180,6 +170,16 @@ class MealsInDayViewModel(private val database: Database, private val date: Stri
 
         return mealSections
     }
+}
+
+fun getTotalCalories(meals: List<MealCaloriesDesc>): Int {
+    var _totalCalories = 0
+
+    meals.forEach { x ->
+        _totalCalories += x.totalCalories
+    }
+
+    return _totalCalories
 }
 
 data class MealsInDayState(val meals: List<MealCaloriesDesc>, val mealSections: List<MealSection>, val mealDescription: String, val totalCalories: Int)

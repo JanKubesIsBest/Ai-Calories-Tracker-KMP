@@ -7,11 +7,15 @@ import kotlinx.datetime.DateTimeUnit
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.minus
 import kotlinx.datetime.toLocalDateTime
+import kubes.jan.gpt_calories_tracker.cache.Database
+import kubes.jan.gpt_calories_tracker.database.entity.MealCaloriesDesc
 import kubes.jan.gpt_calories_tracker.model.view_model.app_view_model.AppViewModel
+import kubes.jan.gpt_calories_tracker.model.view_model.mealsInDay.MealsInDayIntent
+import kubes.jan.gpt_calories_tracker.model.view_model.mealsInDay.getTotalCalories
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
 
-class MenuViewModel() : ViewModel(), KoinComponent {
+class MenuViewModel(private val database: Database,) : ViewModel(), KoinComponent {
     private val appViewModel: AppViewModel by inject()
 
     val menuState: MutableStateFlow<MenuViewModelState> = MutableStateFlow(
@@ -22,6 +26,33 @@ class MenuViewModel() : ViewModel(), KoinComponent {
 
     init {
         menuState.value = menuState.value.copy(days = getPreviousDays())
+
+        getAllDays()
+    }
+
+    fun processUserIntents(userIntent: MenuIntent) {
+        when (userIntent) {
+            is MenuIntent.GetDays -> {
+                getAllDays()
+            }
+            /*
+            * You can also handle other user intents such as GetUsers here
+            * */
+        }
+    }
+
+    private fun getAllDays() {
+        var newDaysList = emptyList<Day>()
+
+        menuState.value.days.forEach { day ->
+            val meals = database.getMealByDate(day.date)
+            val totalCalories = getTotalCalories(meals)
+
+            var newDay = day.copy(meals = meals, totalCalories = totalCalories)
+            newDaysList = newDaysList + newDay
+        }
+
+        menuState.value = menuState.value.copy(days = newDaysList)
     }
 
     private fun getPreviousDays(): List<Day> {
@@ -43,6 +74,8 @@ class MenuViewModel() : ViewModel(), KoinComponent {
                 date = thisDay.toString(),
                 title = title,
                 description = thisDay.toString(),
+                totalCalories = 0,
+                meals = emptyList()
             )
         }
     }
@@ -58,4 +91,6 @@ data class Day(
     val date: String,
     val title: String,
     val description: String,
+    val totalCalories: Int,
+    val meals: List<MealCaloriesDesc>
 )
