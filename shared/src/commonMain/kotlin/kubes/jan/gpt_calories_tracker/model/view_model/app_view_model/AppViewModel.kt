@@ -5,6 +5,7 @@ import kotlinx.coroutines.flow.asSharedFlow
 
 sealed class Event {
     data class DeleteEvent(val id: Int) : Event()
+    data object UpdateMeals : Event()
 }
 
 // This model with be injected with Coin

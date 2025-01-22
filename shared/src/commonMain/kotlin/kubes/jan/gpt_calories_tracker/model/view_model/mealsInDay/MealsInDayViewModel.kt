@@ -39,6 +39,9 @@ class MealsInDayViewModel(private val database: Database, private val date: Stri
                 println("Collected: $event")
                 when (event) {
                     is Event.DeleteEvent -> deleteEvent(event.id)
+                    Event.UpdateMeals -> {
+                        getAllMeals()
+                    }
                 }
             }
         }

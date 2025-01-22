@@ -31,7 +31,7 @@ class CaloriesDetailViewModel(private val database: Database, private val meal: 
         when (userIntent) {
             is CaloriesDetailIntent.Delete -> {
                 viewModelScope.launch {
-                    appViewModel.postEvent(Event.DeleteEvent(meal.id))
+                    appViewModel.postEvent(Event.UpdateMeals)
                 }
             }
 
@@ -43,6 +43,10 @@ class CaloriesDetailViewModel(private val database: Database, private val meal: 
                 database.editMealById(newMeal)
 
                 caloriesDetailState.value = caloriesDetailState.value.copy(meal = newMeal)
+
+                viewModelScope.launch {
+                    appViewModel.postEvent(Event.UpdateMeals)
+                }
             }
             is CaloriesDetailIntent.EditHeading -> {
                 println(userIntent.newHeading)
@@ -52,6 +56,10 @@ class CaloriesDetailViewModel(private val database: Database, private val meal: 
                 database.editMealById(newMeal)
 
                 caloriesDetailState.value = caloriesDetailState.value.copy(meal = newMeal)
+
+                viewModelScope.launch {
+                    appViewModel.postEvent(Event.UpdateMeals)
+                }
             }
         }
     }
