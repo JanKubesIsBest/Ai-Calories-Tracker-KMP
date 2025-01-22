@@ -1,7 +1,9 @@
 package kubes.jan.gpt_calories_tracker.model.view_model.menu
 
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.launch
 import kotlinx.datetime.Clock
 import kotlinx.datetime.DateTimeUnit
 import kotlinx.datetime.TimeZone
@@ -10,6 +12,7 @@ import kotlinx.datetime.toLocalDateTime
 import kubes.jan.gpt_calories_tracker.cache.Database
 import kubes.jan.gpt_calories_tracker.database.entity.MealCaloriesDesc
 import kubes.jan.gpt_calories_tracker.model.view_model.app_view_model.AppViewModel
+import kubes.jan.gpt_calories_tracker.model.view_model.app_view_model.Event
 import kubes.jan.gpt_calories_tracker.model.view_model.mealsInDay.MealsInDayIntent
 import kubes.jan.gpt_calories_tracker.model.view_model.mealsInDay.getTotalCalories
 import org.koin.core.component.KoinComponent
@@ -28,6 +31,18 @@ class MenuViewModel(private val database: Database,) : ViewModel(), KoinComponen
         menuState.value = menuState.value.copy(days = getPreviousDays())
 
         getAllDays()
+
+        viewModelScope.launch {
+            appViewModel.events.collect { event ->
+                println("Collected: $event")
+                when (event) {
+                    Event.UpdateMeals -> {
+                        getAllDays()
+                    }
+                    else -> {}
+                }
+            }
+        }
     }
 
     fun processUserIntents(userIntent: MenuIntent) {
