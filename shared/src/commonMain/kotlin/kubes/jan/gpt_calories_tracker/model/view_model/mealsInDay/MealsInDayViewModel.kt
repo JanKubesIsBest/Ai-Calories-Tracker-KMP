@@ -93,7 +93,6 @@ class MealsInDayViewModel(private val database: Database, private val date: Stri
 
         val newMeal = databaseMeal.copy(id = idOfThisMeal)
 
-
         mealsInDayState.value = mealsInDayState.value.copy(
             meals = mealsInDayState.value.meals + newMeal,
             mealSections = groupMealsByTimeDifference(mealsInDayState.value.meals + newMeal),
@@ -116,49 +115,53 @@ class MealsInDayViewModel(private val database: Database, private val date: Stri
         }
     }
 
-    private fun groupMealsByTimeDifference(meals: List<MealCaloriesDesc>): List<MealSection> {
-        // Parse ISO 8601 timestamps and sort meals chronologically
-        val sortedMeals = meals.sortedBy { Instant.parse(it.date) }
-        val mealSections = mutableListOf<MealSection>()
-        val currentSectionMeals = mutableListOf<MealCaloriesDesc>()
-        var lastMealTime: Instant? = null
+    companion object {
+        fun groupMealsByTimeDifference(meals: List<MealCaloriesDesc>): List<MealSection> {
+            // Parse ISO 8601 timestamps and sort meals chronologically
+            val sortedMeals = meals.sortedBy { Instant.parse(it.date) }
+            val mealSections = mutableListOf<MealSection>()
+            val currentSectionMeals = mutableListOf<MealCaloriesDesc>()
+            var lastMealTime: Instant? = null
 
-        for (meal in sortedMeals) {
-            val mealTime = Instant.parse(meal.date)
-            if (lastMealTime == null || mealTime - lastMealTime >= 30.minutes) {
-                // If there's already a section, save it before starting a new one
-                if (currentSectionMeals.isNotEmpty()) {
-                    val czechTimeZone = TimeZone.of("Europe/Prague")
-                    val headingTime = Instant.parse(currentSectionMeals[0].date).toLocalDateTime(czechTimeZone)
-                    mealSections.add(
-                        MealSection(
-                            meals = currentSectionMeals.toList(),
-                            // The first meal in the section will set the heading of the section -> time when it was eaten
-                            sectionName = headingTime.hour.toString() + ":" + headingTime.minute.toString()
+            for (meal in sortedMeals) {
+                val mealTime = Instant.parse(meal.date)
+                if (lastMealTime == null || mealTime - lastMealTime >= 30.minutes) {
+                    // If there's already a section, save it before starting a new one
+                    if (currentSectionMeals.isNotEmpty()) {
+                        val czechTimeZone = TimeZone.of("Europe/Prague")
+                        val headingTime = Instant.parse(currentSectionMeals[0].date)
+                            .toLocalDateTime(czechTimeZone)
+                        mealSections.add(
+                            MealSection(
+                                meals = currentSectionMeals.toList(),
+                                // The first meal in the section will set the heading of the section -> time when it was eaten
+                                sectionName = headingTime.hour.toString() + ":" + headingTime.minute.toString()
+                            )
                         )
-                    )
-                    currentSectionMeals.clear()
+                        currentSectionMeals.clear()
+                    }
+                    currentSectionMeals.add(meal)
+                    lastMealTime = mealTime
+                } else {
+                    currentSectionMeals.add(meal)
                 }
-                currentSectionMeals.add(meal)
-                lastMealTime = mealTime
-            } else {
-                currentSectionMeals.add(meal)
             }
-        }
 
-        // Add the last section if it's not empty
-        if (currentSectionMeals.isNotEmpty()) {
-            val czechTimeZone = TimeZone.of("Europe/Prague")
-            val headingTime = Instant.parse(currentSectionMeals[0].date).toLocalDateTime(czechTimeZone)
-            mealSections.add(
-                MealSection(
-                    meals = currentSectionMeals.toList(),
-                    sectionName = headingTime.hour.toString() + ":" + headingTime.minute.toString()
+            // Add the last section if it's not empty
+            if (currentSectionMeals.isNotEmpty()) {
+                val czechTimeZone = TimeZone.of("Europe/Prague")
+                val headingTime =
+                    Instant.parse(currentSectionMeals[0].date).toLocalDateTime(czechTimeZone)
+                mealSections.add(
+                    MealSection(
+                        meals = currentSectionMeals.toList(),
+                        sectionName = headingTime.hour.toString() + ":" + headingTime.minute.toString()
+                    )
                 )
-            )
-        }
+            }
 
-        return mealSections
+            return mealSections
+        }
     }
 }
 
@@ -180,4 +183,8 @@ sealed class MealsInDayIntent {
     data object GetAllMeals: MealsInDayIntent()
 }
 
-data class MealSection(val meals: List<MealCaloriesDesc>, val sectionName: String)
+data class MealSection(val meals: List<MealCaloriesDesc>, val sectionName: String) {
+    fun totalCalories(): Int {
+        return meals.sumOf { it.totalCalories }
+    }
+}

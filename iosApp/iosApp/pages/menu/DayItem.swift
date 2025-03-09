@@ -7,6 +7,7 @@
 //
 import SwiftUI
 import Shared
+import Charts
 
 struct NormalDay: View {
     var day: Day
@@ -53,6 +54,17 @@ struct TodayDay: View {
                 + Text(" Total calories: \(day.totalCalories)")
                     .font(.subheadline)
                     .bold()
+                
+                if #available(iOS 16.0, *) {
+                    Chart {
+                        ForEach(MealsInDayViewModel.companion.groupMealsByTimeDifference(meals: day.meals), id: \.self) { section in
+                            BarMark(
+                                x: .value("Shape Type", section.sectionName),
+                                y: .value("Total Count", section.totalCalories())
+                            )
+                        }
+                    }
+                }
             }
             .frame(
                 maxWidth: .infinity,
@@ -60,6 +72,5 @@ struct TodayDay: View {
                 alignment: .topLeading
             )
         }
-        .listRowBackground(Color.blue)
     }
 }
