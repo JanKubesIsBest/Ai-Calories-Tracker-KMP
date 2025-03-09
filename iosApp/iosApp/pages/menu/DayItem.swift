@@ -48,6 +48,7 @@ struct TodayDay: View {
                 Text(day.title)
                     .font(.largeTitle)
                     .fontWeight(.bold)
+                    .padding(.top, 5)
                 Text(day.description_)
                     .font(.subheadline)
                     .foregroundColor(.secondary)
@@ -59,11 +60,11 @@ struct TodayDay: View {
                     Chart {
                         ForEach(MealsInDayViewModel.companion.groupMealsByTimeDifference(meals: day.meals), id: \.self) { section in
                             BarMark(
-                                x: .value("Shape Type", section.sectionName),
-                                y: .value("Total Count", section.totalCalories())
+                                x: .value("Time", section.sectionName),
+                                y: .value("Total Calories", section.totalCalories())
                             )
                         }
-                    }
+                    }.padding(.top, 10)
                 }
             }
             .frame(
