@@ -134,10 +134,10 @@ class MealsInDayViewModel(private val database: Database, private val date: Stri
                         mealSections.add(
                             MealSection(
                                 meals = currentSectionMeals.toList(),
-                                // The first meal in the section will set the heading of the section -> time when it was eaten
-                                sectionName = headingTime.hour.toString() + ":" + headingTime.minute.toString()
+                                sectionName = "${headingTime.hour}:${headingTime.minute.toString().padStart(2, '0')}"
                             )
                         )
+
                         currentSectionMeals.clear()
                     }
                     currentSectionMeals.add(meal)
