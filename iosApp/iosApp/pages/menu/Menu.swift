@@ -21,18 +21,18 @@ struct MenuView: View {
     }
     
     var body: some View {
-        NavigationView {
-            List {
-                // ForEach over all days in viewModel.menuState.days
-                Observing(viewModel.menuState) { state in
-                    TodayDay(day: state.days[0])
-                    
-                    ForEach(1..<state.days.count, id: \.self) { index in
+            NavigationView {
+                List {
+                    // ForEach over all days in viewModel.menuState.days
+                    Observing(viewModel.menuState) { state in
+                        TodayDay(day: state.days[0])
                         
-                        NormalDay(day: state.days[index])
+                        ForEach(1..<state.days.count, id: \.self) { index in
+                            
+                            NormalDay(day: state.days[index])
+                        }
                     }
-                }
-            }.navigationTitle("Menu")
-        }
+                }.navigationTitle("Menu")
+            }
     }
 }
