@@ -18,26 +18,33 @@ struct NormalDay: View {
     
     var body: some View {
         NavigationLink(destination: DayMealsView(date: day.date)) {
-            HStack {
-                VStack (alignment: .leading) {
-                    VStack(alignment: .leading) {
-                        Text(day.title)
-                            .font(.headline)
-                        Text(day.description_)
-                            .font(.subheadline)
-                            .foregroundColor(.secondary)
-                        + Text(" Total calories: \(day.totalCalories)")
-                            .font(.subheadline)
-                            .bold()
+            if #available(iOS 16.1, *) {
+                HStack {
+                    VStack (alignment: .leading) {
+                        VStack(alignment: .leading) {
+                            Text(day.title)
+                                .font(.headline)
+                                .foregroundColor(Color.black)
+                            Text(day.description_)
+                                .font(.subheadline)
+                                .foregroundColor(Color.black)
+                            + Text(" Total calories: \(day.totalCalories)")
+                                .font(.subheadline)
+                                .foregroundColor(Color.black)
+                                .bold()
+                            
+                        }
+                        .multilineTextAlignment(.leading)
                         
+                        
+                        Divider()
                     }
-                    .multilineTextAlignment(.leading)
-                    
-                    
-                    Divider()
+                    Spacer()
+                    Image(systemName: "chevron.right")
+                        .foregroundColor(Color.black)
                 }
-                Spacer()
-                Image(systemName: "chevron.right")
+            } else {
+                // Fallback on earlier versions
             }
         }
         .padding(.vertical, 8)
@@ -62,7 +69,7 @@ struct TodayDay: View {
                         .padding(.top, 5)
                     Text(day.description_)
                         .font(.subheadline)
-                        .foregroundColor(.secondary)
+                        .foregroundColor(Color.black)
                     + Text(" Total calories: \(day.totalCalories)")
                         .font(.subheadline)
                         .bold()
@@ -75,7 +82,8 @@ struct TodayDay: View {
                                     y: .value("Total Calories", section.totalCalories())
                                 )
                             }
-                        }.padding(.top, 10)
+                        }
+                        .padding(.top, 10)
                     }
                     
                     Divider()
