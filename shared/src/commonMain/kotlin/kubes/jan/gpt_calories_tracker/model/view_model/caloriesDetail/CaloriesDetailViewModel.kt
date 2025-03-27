@@ -4,8 +4,11 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
+import kotlinx.datetime.Clock
+import kotlinx.datetime.DateTimeUnit
 import kotlinx.datetime.Instant
 import kotlinx.datetime.LocalDate
+import kotlinx.datetime.LocalTime
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.number
 import kotlinx.datetime.toLocalDateTime
@@ -60,6 +63,10 @@ class CaloriesDetailViewModel(private val database: Database, private val meal: 
                     appViewModel.postEvent(Event.UpdateMeals)
                 }
             }
+            is CaloriesDetailIntent.EditTime -> {
+                println(userIntent.hour)
+                println(userIntent.minute)
+            }
         }
     }
 
@@ -96,4 +103,5 @@ sealed class CaloriesDetailIntent {
 
     data class EditHeading(val newHeading: String): CaloriesDetailIntent()
     data class EditCalories(val newCalories: Int): CaloriesDetailIntent()
+    data class EditTime(val hour: Int, val minute: Int): CaloriesDetailIntent()
 }
