@@ -20,7 +20,8 @@ I also try to keep the Apple's design language, while bringing new, in my view m
 ## How app looks right now. 
 The app is developed only for iOS. Right now, the core logic is working: **Add a new meal -> store it -> display total calories -> edit previous meals**.
 
-Enjoy the simple user flow avaiable right now: 
+Enjoy the simple user flow avaiable shown right here:
+![Image](https://github.com/user-attachments/assets/e1de82c5-8d54-4a3d-8f33-d4a6ae24210d)
 
 ## How app looks inside.
 If you would like to examine the app a little more, I have tried to stick to the simple commiting system:
