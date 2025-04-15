@@ -18,8 +18,10 @@ struct MealCaloriesDetail: View {
     // @State properties declared but not initialized here.
     @State private var viewModel: CaloriesDetailViewModel
     
+    
     @State private var totalCalories: Int32 = 0
     @State private var newHeading: String = ""
+    @State private var time = Date()
     
     init(meal: MealCaloriesDesc) {
         self.meal = meal
@@ -65,6 +67,9 @@ struct MealCaloriesDetail: View {
                         .onSubmit {
                             viewModel.processUserIntents(userIntent: CaloriesDetailIntent.EditHeading(newHeading: newHeading))
                         }
+                    
+                    DatePicker(state: $time, label: { Text("Date") }, displayedComponents: .hourAndMinute)
+                    
                     TextField("Total Calories", value: $totalCalories, formatter: NumberFormatter())
                         .onSubmit {
                             viewModel.processUserIntents(userIntent: CaloriesDetailIntent.EditCalories(newCalories: totalCalories))
