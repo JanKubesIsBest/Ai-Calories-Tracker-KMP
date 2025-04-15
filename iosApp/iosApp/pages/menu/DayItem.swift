@@ -81,6 +81,21 @@ struct TodayDay: View {
                                     x: .value("Time", section.sectionName),
                                     y: .value("Total Calories", section.totalCalories())
                                 )
+                                .foregroundStyle(.primary) // Keeps bars blue
+                            }
+                        }
+                        .chartXAxis {
+                            AxisMarks { _ in
+                                AxisGridLine().foregroundStyle(.black)
+                                AxisTick().foregroundStyle(.black)
+                                AxisValueLabel().foregroundStyle(.black)
+                            }
+                        }
+                        .chartYAxis {
+                            AxisMarks { _ in
+                                AxisGridLine().foregroundStyle(.black)
+                                AxisTick().foregroundStyle(.black)
+                                AxisValueLabel().foregroundStyle(.black)
                             }
                         }
                         .padding(.top, 10)
