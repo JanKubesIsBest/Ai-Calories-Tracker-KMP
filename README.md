@@ -75,3 +75,8 @@ if isKeyboardVisible {
             }
     }
 }
+```
+
+As you can see, the only *"logic"* here is adding a new meal. This is achieved through the function `viewModel.processUserIntents(userIntent: MealsInDayIntent.AddMeal(desc: newMeal))`, which sends a signal to the view model: *"Hey, I'm adding a new meal."* Everything else is then handled by the shared side of the application — **Kotlin Multiplatform is simply beautiful!**
+
+That's about it. One day, I plan to upload the app to the App Store, so stay tuned! 🚀
