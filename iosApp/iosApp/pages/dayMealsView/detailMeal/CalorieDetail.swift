@@ -26,8 +26,21 @@ struct MealCaloriesDetail: View {
         // Setting the values for the edit section
         self.newHeading = meal.heading
         self.totalCalories = meal.totalCalories
-        if (ISO8601DateFormatter().date(from: meal.date) != nil) {
-            self.time = ISO8601DateFormatter().date(from: meal.date)!
+        let formatter = ISO8601DateFormatter()
+        formatter.formatOptions = [.withInternetDateTime, .withFractionalSeconds]
+        if let date = formatter.date(from: meal.date) {
+            
+            // Format it to local time for display
+            let localFormatter = DateFormatter()
+            localFormatter.dateStyle = .medium
+            localFormatter.timeStyle = .medium
+            localFormatter.timeZone = TimeZone.current // Use local time zone
+            print("Parsed Date (Local): \(localFormatter.string(from: date))")
+            
+            self.time = date
+        } else {
+            print("Failed to parse date: \(meal.date)")
+            self.time = Date() // Fallback
         }
         
         
