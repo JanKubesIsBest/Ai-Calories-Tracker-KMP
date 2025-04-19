@@ -88,16 +88,7 @@ class CaloriesDetailViewModel(private val database: Database, private val meal: 
     }
 
     fun timeToStringFormat(): String {
-        val datetimeDate = Instant.parse(caloriesDetailState.value.meal.date)
-        val time = datetimeDate.toLocalDateTime(TimeZone.currentSystemDefault()).time
-
-        val string = time.hour.toString() + ":"
-        println(time.minute.toString())
-        if (time.minute.toString().length < 2) {
-            return string + "0" + time.minute.toString()
-        } else {
-            return string + time.minute.toString()
-        }
+        return kubes.jan.gpt_calories_tracker.utils.timeToStringFormat(caloriesDetailState.value.meal.date)
     }
 
     fun setDateTimeString(dateTimeString: String, newHours: Int, newMinutes: Int): String {

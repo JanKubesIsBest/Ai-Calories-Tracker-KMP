@@ -152,10 +152,11 @@ class MealsInDayViewModel(private val database: Database, private val date: Stri
                 val czechTimeZone = TimeZone.of("Europe/Prague")
                 val headingTime =
                     Instant.parse(currentSectionMeals[0].date).toLocalDateTime(czechTimeZone)
+
                 mealSections.add(
                     MealSection(
                         meals = currentSectionMeals.toList(),
-                        sectionName = headingTime.hour.toString() + ":" + headingTime.minute.toString()
+                        sectionName = "${headingTime.hour}:${headingTime.minute.toString().padStart(2, '0')}"
                     )
                 )
             }
