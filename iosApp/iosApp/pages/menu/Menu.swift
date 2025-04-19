@@ -11,6 +11,7 @@ import Shared
 struct MenuView: View {
     @State private var viewModel: MenuViewModel
     private let db: Database
+    @Environment(\.scenePhase) var scenePhase
     
     init() {
         let driverFactory = DriverFactory()
@@ -22,7 +23,7 @@ struct MenuView: View {
         appearance.backgroundColor = UIColor(Color(hex: "F2F2F7").opacity(0.9))
         
         appearance.shadowColor = .gray // Color of the divider
-
+        
         UINavigationBar.appearance().standardAppearance = appearance
     }
     
@@ -32,43 +33,52 @@ struct MenuView: View {
                 
                 // Scrollable content
                 if #available(iOS 17.0, *) {
-                        // Background image as a separate layer
-                        
-                            ScrollView {
-                                ZStack {
-                                    Image("eclipse")
-                                        .resizable()
-                                        .scaledToFill()
-                                        .frame(width: 800, height: 800)
-                                        .offset(x: -120, y: -700)
-                                        .edgesIgnoringSafeArea(.all)
+                    // Background image as a separate layer
+                    
+                    ScrollView {
+                        ZStack {
+                            Image("eclipse")
+                                .resizable()
+                                .scaledToFill()
+                                .frame(width: 800, height: 800)
+                                .offset(x: -120, y: -700)
+                                .edgesIgnoringSafeArea(.all)
+                            
+                            VStack {
+                                Observing(viewModel.menuState) { state in
                                     
-                                    VStack {
-                                        Observing(viewModel.menuState) { state in
-
-                                                
-                                            TodayDay(day: state.days[0])
-
-                                            
-                                            ForEach(1..<state.days.count, id: \.self) { index in
-                                                    NormalDay(day: state.days[index])
-                                                
-                                            }
-                                        }
+                                    
+                                    TodayDay(day: state.days[0])
+                                    
+                                    
+                                    ForEach(1..<state.days.count, id: \.self) { index in
+                                        NormalDay(day: state.days[index])
+                                        
                                     }
-                                    .background(Color.white)
-                                    .cornerRadius(10)
-                                    .padding(10)
-                                    .padding(.horizontal, geometry.safeAreaInsets.leading)
-                                    .frame(minWidth: 400)
-                                    .navigationTitle("Menu")
-                                    
                                 }
-                            }.background(Color(hex: "F2F2F7"))
+                            }
+                            .background(Color.white)
+                            .cornerRadius(10)
+                            .padding(10)
+                            .padding(.horizontal, geometry.safeAreaInsets.leading)
+                            .frame(minWidth: 400)
+                            .navigationTitle("Menu")
+                            
+                        }
+                    }.background(Color(hex: "F2F2F7"))
                     
                     
                 } else {
                     // Fallback on earlier versions
+                }
+            }
+            .onAppear {
+                viewModel.processUserIntents(userIntent: MenuIntent.GetDays())
+            }
+            .onChange(of: scenePhase) { newPhase in
+                if newPhase == .active {
+                    // App became active (e.g., reopened from background)
+                    viewModel.processUserIntents(userIntent: MenuIntent.GetDays())
                 }
             }
         }
@@ -91,7 +101,7 @@ extension Color {
         default:
             (a, r, g, b) = (1, 1, 1, 0)
         }
-
+        
         self.init(
             .sRGB,
             red: Double(r) / 255,

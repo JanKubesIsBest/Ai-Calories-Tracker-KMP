@@ -28,10 +28,6 @@ class MenuViewModel(private val database: Database,) : ViewModel(), KoinComponen
     )
 
     init {
-        menuState.value = menuState.value.copy(days = getPreviousDays())
-
-        getAllDays()
-
         viewModelScope.launch {
             appViewModel.events.collect { event ->
                 println("Collected: $event")
@@ -48,6 +44,10 @@ class MenuViewModel(private val database: Database,) : ViewModel(), KoinComponen
     fun processUserIntents(userIntent: MenuIntent) {
         when (userIntent) {
             is MenuIntent.GetDays -> {
+                println("Getting Days")
+
+                menuState.value = menuState.value.copy(days = getPreviousDays())
+
                 getAllDays()
             }
             /*
@@ -99,7 +99,7 @@ class MenuViewModel(private val database: Database,) : ViewModel(), KoinComponen
 data class MenuViewModelState(val days: List<Day>)
 
 sealed class MenuIntent {
-    data class GetDays(val desc: String) : MenuIntent()
+    data object GetDays : MenuIntent()
 }
 
 data class Day(
