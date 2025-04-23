@@ -42,24 +42,11 @@ struct DayMealsView: View {
                 
                 if isKeyboardVisible {
                     VStack {
-                        TextField("Enter text", text: $newMeal)
-                            .padding()
-                            .textFieldStyle(RoundedBorderTextFieldStyle()) // Apply a rounded border
-                            .background(Color.clear) // Clear background for the text field
-                            .cornerRadius(8) // Optional: rounded corners
-                            .focused($isTextFieldFocused) // Bind focus state to the TextField
-                            .submitLabel(.done)
-                            .onAppear {
-                                // Automatically focus the TextField when it appears
-                                isTextFieldFocused = true
-                            }
-                            .onSubmit {
-                                viewModel.processUserIntents(userIntent: MealsInDayIntent.AddMeal(desc: newMeal))
-                                newMeal = ""
-                                
-                                isTextFieldFocused = false
-                                isKeyboardVisible = false
-                            }
+                        MealInputView(text: $newMeal, onSubmit: {_ in 
+                            viewModel.processUserIntents(userIntent: MealsInDayIntent.AddMeal(desc: newMeal))
+                            newMeal = ""
+                            isKeyboardVisible = false
+                        })
                     }
                 } else {
                     Button(action: {
@@ -126,6 +113,39 @@ struct MealList: View {
                     }
                 }
             }
+        }
+    }
+}
+
+struct MealInputView: View {
+    @Binding var text: String
+    var onSubmit: (String) -> Void
+    @FocusState private var isFocused: Bool
+    
+    var body: some View {
+        HStack(spacing: 8) {
+            TextField("Enter message", text: $text)
+                .textFieldStyle(RoundedBorderTextFieldStyle())
+                .focused($isFocused)
+                .onSubmit {
+                    onSubmit(text)
+                }
+            
+            Button(action: {
+                onSubmit(text)
+            }) {
+                Image(systemName: "arrow.up")
+                    .foregroundColor(.white)
+                    .frame(width: 30, height: 30)
+                    .background(text.isEmpty ? Color.gray : Color.blue)
+                    .clipShape(Circle())
+            }
+            .disabled(text.isEmpty)
+        }
+        .padding()
+        .background(Color(UIColor.systemBackground))
+        .onAppear {
+            isFocused = true
         }
     }
 }
