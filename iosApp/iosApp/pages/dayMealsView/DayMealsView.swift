@@ -102,12 +102,12 @@ struct MealList: View {
                             .headerProminence(.increased)
                     ) {
                         ForEach(timeSection.meals, id: \.id) { meal in
-                            if #available(iOS 16.0, *) {
+                            if (meal.description_ != "Loading..."){
                                 NavigationLink(destination: MealCaloriesDetail(meal: meal)) {
                                     CalorieItem(meal: meal)
                                 }
                             } else {
-                                // Fallback on earlier versions
+                                CalorieItem(meal: meal)
                             }
                         }
                     }
