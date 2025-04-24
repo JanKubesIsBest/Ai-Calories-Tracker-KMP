@@ -42,10 +42,14 @@ struct DayMealsView: View {
                 
                 if isKeyboardVisible {
                     VStack {
-                        MealInputView(text: $newMeal, onSubmit: {_ in 
-                            viewModel.processUserIntents(userIntent: MealsInDayIntent.AddMeal(desc: newMeal))
-                            newMeal = ""
+                        MealInputView(text: $newMeal, onSubmit: {_ in
                             isKeyboardVisible = false
+                            if (newMeal.isEmpty) {
+                                return
+                            } else {
+                                viewModel.processUserIntents(userIntent: MealsInDayIntent.AddMeal(desc: newMeal))
+                                newMeal = ""
+                            }
                         })
                     }
                 } else {
@@ -124,12 +128,14 @@ struct MealInputView: View {
     
     var body: some View {
         HStack(spacing: 8) {
-            TextField("Enter message", text: $text)
+            TextField("Describe the meal...", text: $text)
                 .textFieldStyle(RoundedBorderTextFieldStyle())
                 .focused($isFocused)
                 .onSubmit {
                     onSubmit(text)
                 }
+                .submitLabel(.go)
+                
             
             Button(action: {
                 onSubmit(text)
@@ -144,6 +150,7 @@ struct MealInputView: View {
         }
         .padding()
         .background(Color(UIColor.systemBackground))
+        .accentColor(.blue)
         .onAppear {
             isFocused = true
         }

@@ -13,6 +13,8 @@ struct MenuView: View {
     private let db: Database
     @Environment(\.scenePhase) var scenePhase
     
+    @State private var offsetY: CGFloat = -600
+    
     init() {
         let driverFactory = DriverFactory()
         self.db = Database(databaseDriverFactory: driverFactory)
@@ -41,8 +43,13 @@ struct MenuView: View {
                                 .resizable()
                                 .scaledToFill()
                                 .frame(width: 800, height: 800)
-                                .offset(x: -120, y: -700)
+                                .offset(x: -120, y: offsetY)
                                 .edgesIgnoringSafeArea(.all)
+                                .onAppear {
+                                    withAnimation(.easeInOut(duration: 2.0)) { // Slow animation (2 seconds)
+                                        offsetY -= 100 // Move image up by 50 points
+                                    }
+                                }
                             
                             VStack {
                                 Observing(viewModel.menuState) { state in
