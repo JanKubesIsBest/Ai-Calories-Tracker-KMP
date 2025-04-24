@@ -52,7 +52,7 @@ struct DayMealsView: View {
                     Button(action: {
                         isKeyboardVisible = true
                     }) {
-                        Text("New Meal")
+                        Text("Add Meal")
                             .padding()
                             .frame(maxWidth: .infinity)
                             .background(Color.blue)
