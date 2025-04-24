@@ -26,6 +26,7 @@ struct DayMealsView: View {
                         MealList(sections: state.mealSections)
                     }
                     .navigationTitle("Total Calories: " + String(state.totalCalories))
+                    .navigationBarTitleDisplayMode(.large)
                     .onTapGesture {
                         self.endTextEditing()
                         print("Tap gesture: " + isKeyboardVisible.description)
@@ -38,6 +39,7 @@ struct DayMealsView: View {
                         MealList(sections: state.mealSections)
                     }
                     .navigationTitle("Total Calories: " + String(state.totalCalories))
+                    .navigationBarTitleDisplayMode(.large)
                 }
                 
                 if isKeyboardVisible {

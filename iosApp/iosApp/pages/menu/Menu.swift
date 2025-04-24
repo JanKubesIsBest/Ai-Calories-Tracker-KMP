@@ -47,7 +47,7 @@ struct MenuView: View {
                                 .edgesIgnoringSafeArea(.all)
                                 .onAppear {
                                     withAnimation(.easeInOut(duration: 2.0)) { // Slow animation (2 seconds)
-                                        offsetY -= 100 // Move image up by 50 points
+                                        offsetY -= 50
                                     }
                                 }
                             
