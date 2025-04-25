@@ -45,7 +45,11 @@ struct DayMealsView: View {
                 if isKeyboardVisible {
                     VStack {
                         MealInputView(text: $newMeal, onSubmit: {_ in
-                            isKeyboardVisible = false
+                            withAnimation {
+                                self.endTextEditing()
+                                isKeyboardVisible = false
+                            }
+                            
                             if (newMeal.isEmpty) {
                                 return
                             } else {
@@ -56,7 +60,9 @@ struct DayMealsView: View {
                     }
                 } else {
                     Button(action: {
-                        isKeyboardVisible = true
+                        withAnimation {
+                            isKeyboardVisible = true
+                        }
                     }) {
                         Text("Add Meal")
                             .padding()
