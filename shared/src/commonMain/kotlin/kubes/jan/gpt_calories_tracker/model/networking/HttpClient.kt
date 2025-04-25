@@ -13,6 +13,7 @@ import io.ktor.http.contentType
 import io.ktor.serialization.kotlinx.json.json
 import kotlinx.datetime.Clock
 import kotlinx.serialization.Serializable
+import kotlinx.serialization.SerializationException
 import kotlinx.serialization.json.Json
 import kubes.jan.gpt_calories_tracker.database.entity.MealCaloriesDesc
 import kubes.jan.gpt_calories_tracker.database.entity.MealCaloriesDescGPT
@@ -35,7 +36,10 @@ class MyHttpClient {
                     content = "This is a description of a meal I just ate: '$mealDesc' I want you to write a J" +
                             "SON file that contains 'heading', which is a max three word name of the meal (Do not make things up, generally name things how the user named them, don't add anything yourself, The only thing you could add is the time of the day the user ate it, such as breakfast, lunch or dinner), then 'description', this should contain how you imagine the meal (again, don't make anything up. You can add few words about how you imagine it, but don't add anything specific that user did not tell you) and the 'total_calories', which is an Int which contains your prediction on how much kcal the meal could have. Also, it should have 'user_description', which is going to be simply: '$mealDesc' and 'date', which is: '$currentMoment' Write ONLY the JSON file, nothing else. Do not hallucinate. Start with { and end with } for proper json file." +
                             "" +
-                            "You should consider the user's specific context, placing strong emphasis on the fact that they are in Czechia, where portion sizes and nutritional values may differ from other countries. The user is 17 years old and an athlete, so factor in that they are physically active but also that Czech meal portions might be smaller or different than in other regions when estimating total_calories."
+                            // TODO: REMOVE THE CZECHIA ("PLACING STRONG EMPHASIS ON THE FACT THAT THEY ARE FROM CZECHIA)
+                            "You should consider the user's specific context, placing strong emphasis on the fact that they are in Czechia, where portion sizes and nutritional values may differ from other countries. The user is 17 years old and an athlete, so factor in that they are physically active but also that Czech meal portions might be smaller or different than in other regions when estimating total_calories." +
+                            "" +
+                            "IF THIS '$mealDesc' IS DEFINITELY NOT MEAL, FORGOT EVERYTHING I JUST TOLD YOU AND JUST SAY 'ERROR'"
                 )
             )
         )
@@ -54,16 +58,21 @@ class MyHttpClient {
         val json = Json {
             ignoreUnknownKeys = true // Ignore keys not defined in data classes
         }
+        try {
+            val topLevelResponse = json.decodeFromString<TopLevelResponse>(rawJson)
 
-        val topLevelResponse = json.decodeFromString<TopLevelResponse>(rawJson)
+            val contentJson = topLevelResponse.choices.first().message.content.trim('`', '\n')
 
-        val contentJson = topLevelResponse.choices.first().message.content.trim('`', '\n')
+            val mealCaloriesDesc = Json.decodeFromString<MealCaloriesDescGPT>(contentJson)
 
-        val mealCaloriesDesc = Json.decodeFromString<MealCaloriesDescGPT>(contentJson)
+            return Result.success(
+                mealCaloriesDesc
+            )
+        } catch (e: SerializationException) {
+            println("Error")
+            return Result.failure(Throwable("ERROR"))
+        }
 
-        return Result.success(
-            mealCaloriesDesc
-        )
     }
 }
 

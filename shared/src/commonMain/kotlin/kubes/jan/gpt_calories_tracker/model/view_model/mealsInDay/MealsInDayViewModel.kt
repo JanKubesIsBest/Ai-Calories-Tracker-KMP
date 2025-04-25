@@ -18,7 +18,8 @@ import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
 import kotlin.time.Duration.Companion.minutes
 
-class MealsInDayViewModel(private val database: Database, private val date: String) : ViewModel(), KoinComponent {
+class MealsInDayViewModel(private val database: Database, private val date: String) : ViewModel(),
+    KoinComponent {
     private val appViewModel: AppViewModel by inject()
 
     val mealsInDayState: MutableStateFlow<MealsInDayState> = MutableStateFlow(
@@ -26,7 +27,8 @@ class MealsInDayViewModel(private val database: Database, private val date: Stri
             meals = emptyList(),
             mealSections = emptyList(),
             mealDescription = "",
-            totalCalories = 0
+            totalCalories = 0,
+            mealAddedError = MealAddedError.NONE
         )
     )
 
@@ -63,6 +65,9 @@ class MealsInDayViewModel(private val database: Database, private val date: Stri
         when (userIntent) {
             is MealsInDayIntent.AddMeal -> addNewMeal(userIntent.desc)
             is MealsInDayIntent.GetAllMeals -> getAllMeals()
+            is MealsInDayIntent.ErrorMessageDismissed -> {
+                println("Error Message Dismissed")
+            }
         }
     }
 
@@ -92,10 +97,14 @@ class MealsInDayViewModel(private val database: Database, private val date: Stri
         // Launch network request in the background
         viewModelScope.launch {
             val getter = GetMealCaloriesUseCase()
-            getter.invoke(mealDesc).onSuccess { result ->
-                // Replace the placeholder with real data at the same index
-                addNewMealToTheList(result, placeholderIndex)
-            }
+            getter.invoke(mealDesc)
+                .onSuccess { result ->
+                    // Replace the placeholder with real data at the same index
+                    addNewMealToTheList(result, placeholderIndex)
+                }
+                .onFailure {
+                    removeMeal(placeholderIndex)
+                }
         }
     }
 
@@ -129,6 +138,20 @@ class MealsInDayViewModel(private val database: Database, private val date: Stri
         }
     }
 
+    private fun removeMeal(indexToDelete: Int) {
+        val currentMeals = currentViewState().meals
+
+        val updatedMeals = currentMeals.toMutableList().apply {
+            removeAt(indexToDelete)
+        }
+
+        mealsInDayState.value = mealsInDayState.value.copy(
+            meals = updatedMeals,
+            mealSections = groupMealsByTimeDifference(updatedMeals),
+            totalCalories = getTotalCalories(updatedMeals)
+        )
+    }
+
     companion object {
         fun groupMealsByTimeDifference(meals: List<MealCaloriesDesc>): List<MealSection> {
             val sortedMeals = meals.sortedBy { Instant.parse(it.date) }
@@ -146,7 +169,9 @@ class MealsInDayViewModel(private val database: Database, private val date: Stri
                         mealSections.add(
                             MealSection(
                                 meals = currentSectionMeals.toList(),
-                                sectionName = "${headingTime.hour}:${headingTime.minute.toString().padStart(2, '0')}"
+                                sectionName = "${headingTime.hour}:${
+                                    headingTime.minute.toString().padStart(2, '0')
+                                }"
                             )
                         )
                         currentSectionMeals.clear()
@@ -160,11 +185,14 @@ class MealsInDayViewModel(private val database: Database, private val date: Stri
 
             if (currentSectionMeals.isNotEmpty()) {
                 val czechTimeZone = TimeZone.of("Europe/Prague")
-                val headingTime = Instant.parse(currentSectionMeals[0].date).toLocalDateTime(czechTimeZone)
+                val headingTime =
+                    Instant.parse(currentSectionMeals[0].date).toLocalDateTime(czechTimeZone)
                 mealSections.add(
                     MealSection(
                         meals = currentSectionMeals.toList(),
-                        sectionName = "${headingTime.hour}:${headingTime.minute.toString().padStart(2, '0')}"
+                        sectionName = "${headingTime.hour}:${
+                            headingTime.minute.toString().padStart(2, '0')
+                        }"
                     )
                 )
             }
@@ -186,12 +214,19 @@ data class MealsInDayState(
     val meals: List<MealCaloriesDesc>,
     val mealSections: List<MealSection>,
     val mealDescription: String,
-    val totalCalories: Int
+    val totalCalories: Int,
+
+    val mealAddedError: MealAddedError
 )
 
 sealed class MealsInDayIntent {
     data class AddMeal(val desc: String) : MealsInDayIntent()
     data object GetAllMeals : MealsInDayIntent()
+    data object ErrorMessageDismissed: MealsInDayIntent()
+}
+
+enum class MealAddedError {
+    NONE, ERROR
 }
 
 data class MealSection(val meals: List<MealCaloriesDesc>, val sectionName: String) {
