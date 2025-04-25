@@ -13,7 +13,7 @@ struct MenuView: View {
     private let db: Database
     @Environment(\.scenePhase) var scenePhase
     
-    @State private var offsetY: CGFloat = -600
+    @State private var offsetY: CGFloat = -650
     
     init() {
         let driverFactory = DriverFactory()
@@ -49,6 +49,9 @@ struct MenuView: View {
                                     withAnimation(.easeInOut(duration: 2.0)) { // Slow animation (2 seconds)
                                         offsetY -= 50
                                     }
+                                }
+                                .onDisappear {
+                                    offsetY = -650
                                 }
                             
                             VStack {
