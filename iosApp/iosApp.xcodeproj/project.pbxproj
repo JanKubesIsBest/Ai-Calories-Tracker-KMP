@@ -13,7 +13,6 @@
 		7555FF83242A565900829871 /* DayMealsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7555FF82242A565900829871 /* DayMealsView.swift */; };
 		EA511B3D2CE00DC20047C08D /* CalorieItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = EA511B3C2CE00DBB0047C08D /* CalorieItem.swift */; };
 		EAA1DABC2CFA2D3800FCBBAA /* CalorieDetail.swift in Sources */ = {isa = PBXBuildFile; fileRef = EAA1DABB2CFA2D3300FCBBAA /* CalorieDetail.swift */; };
-		EACD754C2DBBD3430065315E /* DayMealsViewVM.swift in Sources */ = {isa = PBXBuildFile; fileRef = EACD754B2DBBD33C0065315E /* DayMealsViewVM.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -26,7 +25,6 @@
 		AB3632DC29227652001CCB65 /* Config.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = Config.xcconfig; sourceTree = "<group>"; };
 		EA511B3C2CE00DBB0047C08D /* CalorieItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CalorieItem.swift; sourceTree = "<group>"; };
 		EAA1DABB2CFA2D3300FCBBAA /* CalorieDetail.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CalorieDetail.swift; sourceTree = "<group>"; };
-		EACD754B2DBBD33C0065315E /* DayMealsViewVM.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DayMealsViewVM.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
@@ -109,7 +107,6 @@
 		EAA1DAB92CFA2D1B00FCBBAA /* dayMealsView */ = {
 			isa = PBXGroup;
 			children = (
-				EACD754B2DBBD33C0065315E /* DayMealsViewVM.swift */,
 				EAA1DABA2CFA2D1F00FCBBAA /* detailMeal */,
 				EA511B3C2CE00DBB0047C08D /* CalorieItem.swift */,
 				7555FF82242A565900829871 /* DayMealsView.swift */,
@@ -225,7 +222,6 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				EACD754C2DBBD3430065315E /* DayMealsViewVM.swift in Sources */,
 				EAA1DABC2CFA2D3800FCBBAA /* CalorieDetail.swift in Sources */,
 				EA511B3D2CE00DC20047C08D /* CalorieItem.swift in Sources */,
 				2152FB042600AC8F00CF470E /* iOSApp.swift in Sources */,
