@@ -13,6 +13,8 @@ struct DayMealsView: View {
     // Initialize the view model
     @State private var viewModel: MealsInDayViewModel
     
+    @State var shouldPresentSheet = false
+    
     init(date: String) {
         self.db = Database(databaseDriverFactory: driverFactory)
         self._viewModel = State(initialValue: MealsInDayViewModel(database: db, date: date))
@@ -21,66 +23,78 @@ struct DayMealsView: View {
     var body: some View {
         if #available(iOS 16.0, *) {
             Observing(viewModel.mealsInDayState) { state in
-                if isKeyboardVisible {
-                    VStack {
-                        MealList(sections: state.mealSections)
-                    }
-                    .navigationTitle("Total Calories: " + String(state.totalCalories))
-                    .navigationBarTitleDisplayMode(.large)
-                    .onTapGesture {
-                        self.endTextEditing()
-                        print("Tap gesture: " + isKeyboardVisible.description)
-                        // If keyboard is visible
-                        isKeyboardVisible = false
-                        isTextFieldFocused = false
-                    }
-                } else {
-                    VStack {
-                        MealList(sections: state.mealSections)
-                    }
-                    .navigationTitle("Total Calories: " + String(state.totalCalories))
-                    .navigationBarTitleDisplayMode(.large)
-                }
-                
-                if isKeyboardVisible {
-                    VStack {
-                        MealInputView(text: $newMeal, onSubmit: {_ in
-                            withAnimation {
-                                self.endTextEditing()
-                                isKeyboardVisible = false
-                            }
-                            
-                            if (newMeal.isEmpty) {
-                                return
-                            } else {
-                                viewModel.processUserIntents(userIntent: MealsInDayIntent.AddMeal(desc: newMeal))
-                                newMeal = ""
-                            }
-                        })
-                    }
-                } else {
-                    Button(action: {
-                        withAnimation {
-                            isKeyboardVisible = true
+                VStack {
+                    if isKeyboardVisible {
+                        VStack {
+                            MealList(sections: state.mealSections)
                         }
-                    }) {
-                        Text("Add Meal")
-                            .padding()
-                            .frame(maxWidth: .infinity)
-                            .background(Color.blue)
-                            .foregroundColor(.white)
-                            .cornerRadius(8)
-                            .padding(.bottom, 20)
+                        .navigationTitle("Total Calories: " + String(state.totalCalories))
+                        .navigationBarTitleDisplayMode(.large)
+                        .onTapGesture {
+                            self.endTextEditing()
+                            print("Tap gesture: " + isKeyboardVisible.description)
+                            // If keyboard is visible
+                            isKeyboardVisible = false
+                            isTextFieldFocused = false
+                        }
+                    } else {
+                        VStack {
+                            MealList(sections: state.mealSections)
+                        }
+                        .navigationTitle("Total Calories: " + String(state.totalCalories))
+                        .navigationBarTitleDisplayMode(.large)
                     }
-                    .padding(.horizontal, 10)
+                    
+                    if isKeyboardVisible {
+                        VStack {
+                            MealInputView(text: $newMeal, onSubmit: {_ in
+                                withAnimation {
+                                    self.endTextEditing()
+                                    isKeyboardVisible = false
+                                }
+                                
+                                if (newMeal.isEmpty) {
+                                    return
+                                } else {
+                                    viewModel.processUserIntents(userIntent: MealsInDayIntent.AddMeal(desc: newMeal))
+                                    newMeal = ""
+                                }
+                            })
+                        }
+                    } else {
+                        Button(action: {
+                            withAnimation {
+                                isKeyboardVisible = true
+                            }
+                        }) {
+                            Text("Add Meal")
+                                .padding()
+                                .frame(maxWidth: .infinity)
+                                .background(Color.blue)
+                                .foregroundColor(.white)
+                                .cornerRadius(8)
+                                .padding(.bottom, 20)
+                        }
+                        .padding(.horizontal, 10)
+                    }
                 }
+                .sheet(isPresented: $shouldPresentSheet){
+                    print("sheet")
+                } content: {
+                    VStack {
+                        Text("Sheet!")
+                    }
+                }
+            }
+            .onAppear {
+                // There will be a function viewModel.showOnLoading()
+                shouldPresentSheet = false
             }
         } else {
             // Fallback on earlier versions
             Text("Hello, World!")
         }
     }
-    
 }
 
 extension View {
@@ -114,13 +128,10 @@ struct MealList: View {
                             .headerProminence(.increased)
                     ) {
                         ForEach(timeSection.meals, id: \.id) { meal in
-                            if (meal.description_ != "Loading..."){
-                                NavigationLink(destination: MealCaloriesDetail(meal: meal)) {
-                                    CalorieItem(meal: meal)
-                                }
-                            } else {
+                            NavigationLink(destination: MealCaloriesDetail(meal: meal)) {
                                 CalorieItem(meal: meal)
                             }
+                            .disabled(meal.description_ == "Loading...")
                         }
                     }
                 }
@@ -143,7 +154,7 @@ struct MealInputView: View {
                     onSubmit(text)
                 }
                 .submitLabel(.go)
-                
+            
             
             Button(action: {
                 onSubmit(text)
