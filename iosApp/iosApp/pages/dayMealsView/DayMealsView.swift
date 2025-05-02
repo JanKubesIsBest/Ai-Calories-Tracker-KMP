@@ -6,29 +6,20 @@ struct DayMealsView: View {
     @State private var isKeyboardVisible = false
     @FocusState private var isTextFieldFocused: Bool
     
-    // Create the driver and database
-    private let driverFactory = DriverFactory()
-    private let db: Database
-    
-    // Initialize the view model
-    @State private var viewModel: MealsInDayViewModel
-    
-    @State var shouldPresentSheet = false
+    @StateObject private var viewModel: DayMealsVM
     
     init(date: String) {
-        self.db = Database(databaseDriverFactory: driverFactory)
-        self._viewModel = State(initialValue: MealsInDayViewModel(database: db, date: date))
+        _viewModel = StateObject(wrappedValue: DayMealsVM(date: date))
     }
     
     var body: some View {
         if #available(iOS 16.0, *) {
-            Observing(viewModel.mealsInDayState) { state in
                 VStack {
                     if isKeyboardVisible {
                         VStack {
-                            MealList(sections: state.mealSections)
+                            MealList(sections: viewModel.state.mealSections)
                         }
-                        .navigationTitle("Total Calories: " + String(state.totalCalories))
+                        .navigationTitle("Total Calories: " + String(viewModel.state.totalCalories))
                         .navigationBarTitleDisplayMode(.large)
                         .onTapGesture {
                             self.endTextEditing()
@@ -39,9 +30,9 @@ struct DayMealsView: View {
                         }
                     } else {
                         VStack {
-                            MealList(sections: state.mealSections)
+                            MealList(sections: viewModel.state.mealSections)
                         }
-                        .navigationTitle("Total Calories: " + String(state.totalCalories))
+                        .navigationTitle("Total Calories: " + String(viewModel.state.totalCalories))
                         .navigationBarTitleDisplayMode(.large)
                     }
                     
@@ -56,7 +47,7 @@ struct DayMealsView: View {
                                 if (newMeal.isEmpty) {
                                     return
                                 } else {
-                                    viewModel.processUserIntents(userIntent: MealsInDayIntent.AddMeal(desc: newMeal))
+                                    viewModel.model.processUserIntents(userIntent: MealsInDayIntent.AddMeal(desc: newMeal))
                                     newMeal = ""
                                 }
                             })
@@ -78,18 +69,13 @@ struct DayMealsView: View {
                         .padding(.horizontal, 10)
                     }
                 }
-                .sheet(isPresented: $shouldPresentSheet){
-                    print("sheet")
-                } content: {
-                    VStack {
-                        Text("Sheet!")
-                    }
+                .onAppear {
+                    // There will be a function viewModel.showOnLoading()
+//                    shouldPresentSheet = false
                 }
-            }
-            .onAppear {
-                // There will be a function viewModel.showOnLoading()
-                shouldPresentSheet = false
-            }
+                .task {
+                    await viewModel.activate()
+                }
         } else {
             // Fallback on earlier versions
             Text("Hello, World!")

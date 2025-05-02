@@ -2,8 +2,11 @@ package kubes.jan.gpt_calories_tracker.model.view_model.mealsInDay
 
 import androidx.lifecycle.ViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+
 import kubes.jan.gpt_calories_tracker.model.networking.UseCases.GetMealCaloriesUseCase
 import androidx.lifecycle.viewModelScope
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import kotlinx.datetime.Clock
 import kotlinx.datetime.Instant
@@ -22,7 +25,7 @@ class MealsInDayViewModel(private val database: Database, private val date: Stri
     KoinComponent {
     private val appViewModel: AppViewModel by inject()
 
-    val mealsInDayState: MutableStateFlow<MealsInDayState> = MutableStateFlow(
+    private val _mealsInDayState: MutableStateFlow<MealsInDayState> = MutableStateFlow(
         MealsInDayState(
             meals = emptyList(),
             mealSections = emptyList(),
@@ -31,6 +34,8 @@ class MealsInDayViewModel(private val database: Database, private val date: Stri
             mealAddedError = MealAddedError.NONE
         )
     )
+
+    val mealsInDayState: StateFlow<MealsInDayState> = _mealsInDayState.asStateFlow()
 
     init {
         println("INIT MealsInDayViewModel")
@@ -48,13 +53,13 @@ class MealsInDayViewModel(private val database: Database, private val date: Stri
     }
 
     private fun currentViewState(): MealsInDayState {
-        return mealsInDayState.value
+        return _mealsInDayState.value
     }
 
     private fun getAllMeals() {
         val newMeals = database.getMealByDate(date)
         println(groupMealsByTimeDifference(newMeals))
-        mealsInDayState.value = mealsInDayState.value.copy(
+        _mealsInDayState.value = _mealsInDayState.value.copy(
             meals = newMeals,
             mealSections = groupMealsByTimeDifference(newMeals),
             totalCalories = getTotalCalories(newMeals)
@@ -88,7 +93,7 @@ class MealsInDayViewModel(private val database: Database, private val date: Stri
         val placeholderIndex = updatedMeals.lastIndex // Index of the newly added meal
 
         // Update the state immediately
-        mealsInDayState.value = mealsInDayState.value.copy(
+        _mealsInDayState.value = _mealsInDayState.value.copy(
             meals = updatedMeals,
             mealSections = groupMealsByTimeDifference(updatedMeals),
             totalCalories = getTotalCalories(updatedMeals)
@@ -127,7 +132,7 @@ class MealsInDayViewModel(private val database: Database, private val date: Stri
             currentMeals + newMeal
         }
 
-        mealsInDayState.value = mealsInDayState.value.copy(
+        _mealsInDayState.value = _mealsInDayState.value.copy(
             meals = updatedMeals,
             mealSections = groupMealsByTimeDifference(updatedMeals),
             totalCalories = getTotalCalories(updatedMeals)
@@ -145,7 +150,7 @@ class MealsInDayViewModel(private val database: Database, private val date: Stri
             removeAt(indexToDelete)
         }
 
-        mealsInDayState.value = mealsInDayState.value.copy(
+        _mealsInDayState.value = _mealsInDayState.value.copy(
             meals = updatedMeals,
             mealSections = groupMealsByTimeDifference(updatedMeals),
             totalCalories = getTotalCalories(updatedMeals)
