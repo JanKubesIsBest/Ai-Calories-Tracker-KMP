@@ -47,21 +47,23 @@ struct OnboardingSheetView: View {
                         .animation(.easeInOut(duration: 0.5), value: sheetPoint)
                     
                     // Third Sheet (sheetPoint == 2)
-                Sheet3(saveAction: {_,_,_,_ in
-                    // Here will be the actual logic
-                    impactFeedback.impactOccurred()
-                    advanceAction()
-                })
-                    .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
-                        .offset(x: sheetPoint >= 2 ? 0 : UIScreen.main.bounds.width) // Slide in from right when active
+                    Sheet3(saveAction: {_,_,_,_ in
+                        // Here will be the actual logic
+                        impactFeedback.impactOccurred()
+                        advanceAction()
+                    })
+                        .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
+                        .offset(x: sheetPoint == 2 ? 0 : (sheetPoint < 2 ? UIScreen.main.bounds.width : -UIScreen.main.bounds.width)) // Slide in from right when active
+                            .animation(.easeInOut(duration: 0.5), value: sheetPoint)
+                    
+                    Sheet4(dismissAction: {
+                        impactFeedback.impactOccurred()
+                    })
+                        .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
+                        .offset(x: sheetPoint >= 3 ? 0 : UIScreen.main.bounds.width)
                         .animation(.easeInOut(duration: 0.5), value: sheetPoint)
-                }
-//            Sheet4(dismissAction: {
-//                impactFeedback.impactOccurred()
-//            })
-//                .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
-//                .offset(x: sheetPoint >= 3 ? 0 : UIScreen.main.bounds.width)
-//                .animation(.easeInOut(duration: 0.5), value: sheetPoint)
+                    }
+
             
         }
         .background(Color.blue.opacity(0.2))
@@ -308,7 +310,7 @@ struct Sheet3: View {
                     .clipped()
                     .ignoresSafeArea(edges: .horizontal)
                 
-                Text("More context, better results!")
+                Text("Info")
                     .font(.title)
                     .fontWeight(.bold)
                     .frame(maxWidth: .infinity, alignment: .leading)
@@ -461,8 +463,6 @@ struct Sheet4: View {
                     .cornerRadius(10)
             }
             .padding(.horizontal)
-            
-            Spacer()
         }
     }
 }
