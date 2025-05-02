@@ -90,6 +90,8 @@ class MealsInDayViewModel(private val database: Database, private val date: Stri
 
             is MealsInDayIntent.CloseOnBoarding -> {
                 println("Close onboarding")
+                // A fake insert so the onboarding is never shown again
+                database.insertMeal(MealCaloriesDesc(id = 0, "", "", "", "", 0))
                 _mealsInDayState.value = _mealsInDayState.value.copy(
                     showSheet = false
                 )
@@ -123,7 +125,10 @@ class MealsInDayViewModel(private val database: Database, private val date: Stri
         // Launch network request in the background
         viewModelScope.launch {
             val getter = GetMealCaloriesUseCase()
-            getter.invoke(mealDesc)
+
+            val userInfo: UserInfo = database.getUserInfo()
+
+            getter.invoke(mealDesc, userInfo)
                 .onSuccess { result ->
                     // Replace the placeholder with real data at the same index
                     addNewMealToTheList(result, placeholderIndex)
@@ -182,16 +187,12 @@ class MealsInDayViewModel(private val database: Database, private val date: Stri
 
     private fun checkFirstTime() {
         val newMeals = database.getAllMeals()
-//        if (newMeals.isEmpty()) {
-//            // Is there for the first time
-//            _mealsInDayState.value = _mealsInDayState.value.copy(
-//                showSheet = true
-//            )
-//        }
-        // Testing
-        _mealsInDayState.value = _mealsInDayState.value.copy(
-            showSheet = true
-        )
+        if (newMeals.isEmpty()) {
+            // Is there for the first time
+            _mealsInDayState.value = _mealsInDayState.value.copy(
+                showSheet = true
+            )
+        }
     }
 
     private fun saveOnBoardingData(gender: String, weight: Int, build: String, selectedCountry: String) {

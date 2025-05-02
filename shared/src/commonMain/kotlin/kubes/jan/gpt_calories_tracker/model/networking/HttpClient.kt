@@ -17,6 +17,7 @@ import kotlinx.serialization.SerializationException
 import kotlinx.serialization.json.Json
 import kubes.jan.gpt_calories_tracker.database.entity.MealCaloriesDesc
 import kubes.jan.gpt_calories_tracker.database.entity.MealCaloriesDescGPT
+import kubes.jan.gpt_calories_tracker.database.entity.UserInfo
 
 class MyHttpClient {
     private val client = HttpClient {
@@ -25,8 +26,38 @@ class MyHttpClient {
         }
     }
 
-    suspend fun GetCalories(mealDesc: String): Result<MealCaloriesDescGPT> {
+    suspend fun GetCalories(mealDesc: String, userInfo: UserInfo): Result<MealCaloriesDescGPT> {
         val currentMoment = Clock.System.now().toString()
+
+        var helper = ""
+        var genderHelper = ""
+        var weightHelper = ""
+        var buildHelper = ""
+        var countryHelper = ""
+
+        if (userInfo.gender != "Not specified" || userInfo.gender != "Other") {
+            genderHelper = "Gender: Consider the fact that the user is: " + userInfo.gender + ". This might influence factors such as portion size (males generally eat bigger portions)."
+        }
+
+        if (userInfo.weight != 0) {
+            // TODO: Using Kg, in the future I should add an option to use lb
+            weightHelper = "Weight: You should consider the fact that user weighs: " + userInfo.weight + " Kg. This may influence his eating behaviour, such as portion size or the amount of sugar user puts into his meals. If I mentioned gender, consider that together with weight, because males weigh more than females."
+        }
+
+        if (userInfo.build != "Not specified") {
+            // TODO: Using Kg, in the future I should add an option to use lb
+            buildHelper = "Build: You should consider the fact that user described his build as: " + userInfo.build + " This may influence his eating behaviour. For example, muscular people generally tend to eat more. If I mentioned weight already, consider that together with the build, because one can be very muscular, but can still be small in terms of weight, which might result in smaller portions."
+        }
+
+
+        if (userInfo.country != "Not specified") {
+            // TODO: Using Kg, in the future I should add an option to use lb
+            countryHelper = "Build: You should consider the fact that user lives in: " + userInfo.build + " This may influence his eating behaviour. For example, in the US foods generally contain more sugar and fat."
+        }
+
+        if ((genderHelper + weightHelper + buildHelper + countryHelper).isNotEmpty()) {
+            helper = "You should consider: "
+        }
 
         val requestBody = MealRequestBody(
             model = "meta-llama/Meta-Llama-3.1-405B-Instruct-Turbo", // meta-llama/Llama-3.2-11B-Vision-Instruct-Turbo
@@ -36,8 +67,11 @@ class MyHttpClient {
                     content = "This is a description of a meal I just ate: '$mealDesc' I want you to write a J" +
                             "SON file that contains 'heading', which is a max three word name of the meal (Do not make things up, generally name things how the user named them, don't add anything yourself, The only thing you could add is the time of the day the user ate it, such as breakfast, lunch or dinner), then 'description', this should contain how you imagine the meal (again, don't make anything up. You can add few words about how you imagine it, but don't add anything specific that user did not tell you) and the 'total_calories', which is an Int which contains your prediction on how much kcal the meal could have. Also, it should have 'user_description', which is going to be simply: '$mealDesc' and 'date', which is: '$currentMoment' Write ONLY the JSON file, nothing else. Do not hallucinate. Start with { and end with } for proper json file." +
                             "" +
-                            // TODO: REMOVE THE CZECHIA ("PLACING STRONG EMPHASIS ON THE FACT THAT THEY ARE FROM CZECHIA)
-                            "You should consider the user's specific context, placing strong emphasis on the fact that they are in Czechia, where portion sizes and nutritional values may differ from other countries. The user is 17 years old and an athlete, so factor in that they are physically active but also that Czech meal portions might be smaller or different than in other regions when estimating total_calories." +
+                            helper +
+                            genderHelper +
+                            weightHelper +
+                            buildHelper +
+                            countryHelper +
                             "" +
                             "IF THIS '$mealDesc' IS DEFINITELY NOT MEAL, FORGOT EVERYTHING I JUST TOLD YOU AND JUST SAY 'ERROR'"
                 )
