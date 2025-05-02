@@ -23,20 +23,27 @@ struct OnboardingSheetView: View {
             Divider()
             
             ZStack {
-                // First VStack (sheetPoint == 0)
-                Sheet1(advanceAction: advanceAction)
-                    .padding()
-                    .frame(maxWidth: .infinity, maxHeight: .infinity)
-                    .offset(x: sheetPoint == 0 ? 0 : -UIScreen.main.bounds.width) // Slide out to left when not active
-                    .animation(.easeInOut(duration: 0.5), value: sheetPoint)
-                
-                // Second VStack (sheetPoint == 1)
-                Sheet2(sheetPoint: sheetPoint, advanceAction: advanceAction)
-                    .padding()
-                    .frame(maxWidth: .infinity, maxHeight: .infinity)
-                    .offset(x: sheetPoint == 1 ? 0 : UIScreen.main.bounds.width) // Slide in from right when active
-                    .animation(.easeInOut(duration: 0.5), value: sheetPoint)
-            }
+                    // First Sheet (sheetPoint == 0)
+                    Sheet1(advanceAction: advanceAction)
+                        .padding()
+                        .frame(maxWidth: .infinity, maxHeight: .infinity)
+                        .offset(x: sheetPoint == 0 ? 0 : -UIScreen.main.bounds.width) // Slide out to left when not active
+                        .animation(.easeInOut(duration: 0.5), value: sheetPoint)
+                    
+                    // Second Sheet (sheetPoint == 1)
+                    Sheet2(sheetPoint: sheetPoint, advanceAction: advanceAction)
+                        .padding()
+                        .frame(maxWidth: .infinity, maxHeight: .infinity)
+                        .offset(x: sheetPoint == 1 ? 0 : (sheetPoint < 1 ? UIScreen.main.bounds.width : -UIScreen.main.bounds.width)) // Slide out to left when inactive
+                        .animation(.easeInOut(duration: 0.5), value: sheetPoint)
+                    
+                    // Third Sheet (sheetPoint == 2)
+                    Sheet3()
+                        .padding()
+                        .frame(maxWidth: .infinity, maxHeight: .infinity)
+                        .offset(x: sheetPoint >= 2 ? 0 : UIScreen.main.bounds.width) // Slide in from right when active
+                        .animation(.easeInOut(duration: 0.5), value: sheetPoint)
+                }
         }
         .background(Color.blue.opacity(0.2))
         .interactiveDismissDisabled()
@@ -102,7 +109,6 @@ struct Sheet1: View {
         .padding(.top, 0)
         .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .leading)
         .onAppear {
-            
             DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
                 withAnimation(.easeIn(duration: 0.5)) {
                     showIntroText = true
@@ -205,8 +211,8 @@ struct Sheet2: View {
             Image("RightImageOnBoarding")
                 .resizable()
                 .scaledToFit()
-                .frame(height: 340)
-                .offset(x: animateRightImage ? 130 : 260)
+                .frame(height: 330)
+                .offset(x: animateRightImage ? 120 : 260)
                 .opacity(animateRightImage ? 1 : 0)
                 .rotationEffect(.degrees(-15))
         }
@@ -231,12 +237,29 @@ struct Sheet2: View {
                         animateBottomImage = true
                     }
                 }
-            } else {
+            } else if (newValue > 1) {
+                animateLeftImage = true
+                animateRightImage = true
+                animateBottomImage = true
+            }
+            else {
                 // Reset animations when Sheet2View is not active
                 animateLeftImage = false
                 animateRightImage = false
                 animateBottomImage = false
             }
+        }
+    }
+}
+
+
+struct Sheet3: View {
+    var body: some View {
+        VStack {
+            Image ("Sheet2Pres")
+                .resizable()
+                .scaledToFit()
+                .frame(width: UIScreen.main.bounds.width)
         }
     }
 }
