@@ -302,7 +302,7 @@ struct Sheet3: View {
     // Gender, Build, and Country options (for pickers)
     private let genders = ["Male", "Female", "Other"]
     private let builds = ["Muscular", "Skinny", "Average", "Athletic", "Slim", "Heavy"]
-    private let countries = ["Czechia", "USA", "UK", "Germany", "France", "Japan", "India"]
+    private let countries = ["USA", "UK", "Germany", "France", "Japan", "India", "Czechia", "Poland", "Other"]
     
     // Weight options (for simplicity, using a range)
     private let weights = Array(30...150) // 30 kg to 150 kg

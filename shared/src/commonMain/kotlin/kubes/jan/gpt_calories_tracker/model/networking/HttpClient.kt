@@ -50,7 +50,7 @@ class MyHttpClient {
         }
 
 
-        if (userInfo.country != "Not specified") {
+        if (userInfo.country != "Not specified" || userInfo.country == "Other") {
             // TODO: Using Kg, in the future I should add an option to use lb
             countryHelper = "Build: You should consider the fact that user lives in: " + userInfo.build + " This may influence his eating behaviour. For example, in the US foods generally contain more sugar and fat."
         }

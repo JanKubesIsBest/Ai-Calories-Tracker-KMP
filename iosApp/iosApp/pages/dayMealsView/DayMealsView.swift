@@ -125,7 +125,7 @@ struct MealList: View {
     
     var body: some View {
         if (sections.count == 0) {
-            Text("Zero meals recorded for this day")
+            Text("Add your first meal for the day! 🚀")
                 .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .center)
         } else {
             List {
