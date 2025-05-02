@@ -7,7 +7,7 @@ import kubes.jan.gpt_calories_tracker.model.networking.MyHttpClient
 
 class GetMealCaloriesUseCase {
     private val httpClient = MyHttpClient()
-    suspend fun invoke(mealDesc: String, userInfo: UserInfo): Result<MealCaloriesDescGPT> {
-        return httpClient.GetCalories(mealDesc, userInfo)
+    suspend fun invoke(mealDesc: String, userInfo: UserInfo, date: String): Result<MealCaloriesDescGPT> {
+        return httpClient.GetCalories(mealDesc, userInfo, date)
     }
 }

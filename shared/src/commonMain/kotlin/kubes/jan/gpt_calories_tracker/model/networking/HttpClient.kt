@@ -26,8 +26,8 @@ class MyHttpClient {
         }
     }
 
-    suspend fun GetCalories(mealDesc: String, userInfo: UserInfo): Result<MealCaloriesDescGPT> {
-        val currentMoment = Clock.System.now().toString()
+    suspend fun GetCalories(mealDesc: String, userInfo: UserInfo, date: String): Result<MealCaloriesDescGPT> {
+        val currentMoment = date
 
         var helper = ""
         var genderHelper = ""

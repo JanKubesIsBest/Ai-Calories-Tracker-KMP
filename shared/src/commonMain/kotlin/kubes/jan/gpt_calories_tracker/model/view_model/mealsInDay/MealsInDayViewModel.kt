@@ -10,7 +10,10 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import kotlinx.datetime.Clock
 import kotlinx.datetime.Instant
+import kotlinx.datetime.LocalDate
+import kotlinx.datetime.LocalDateTime
 import kotlinx.datetime.TimeZone
+import kotlinx.datetime.toInstant
 import kotlinx.datetime.toLocalDateTime
 import kubes.jan.gpt_calories_tracker.cache.Database
 import kubes.jan.gpt_calories_tracker.database.entity.MealCaloriesDesc
@@ -100,12 +103,17 @@ class MealsInDayViewModel(private val database: Database, private val date: Stri
     }
 
     private fun addNewMeal(mealDesc: String) {
+        val addWithDate: String = LocalDateTime(
+            date = LocalDate.parse(date), // Parse the date string (e.g., "2025-05-02")
+            time = Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault()).time
+        ).toInstant(TimeZone.currentSystemDefault()).toString()
+
         // Create a placeholder meal with "Loading..." description
         val placeholderMeal = MealCaloriesDesc(
             id = -1, // Temporary ID to indicate it's not in the database yet
             heading = mealDesc,
             description = "Loading...",
-            date = Clock.System.now().toString(),
+            date = addWithDate,
             userDescription = mealDesc,
             totalCalories = 0
         )
@@ -128,7 +136,7 @@ class MealsInDayViewModel(private val database: Database, private val date: Stri
 
             val userInfo: UserInfo = database.getUserInfo()
 
-            getter.invoke(mealDesc, userInfo)
+            getter.invoke(mealDesc, userInfo, addWithDate)
                 .onSuccess { result ->
                     // Replace the placeholder with real data at the same index
                     addNewMealToTheList(result, placeholderIndex)
