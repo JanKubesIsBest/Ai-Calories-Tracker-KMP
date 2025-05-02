@@ -31,7 +31,7 @@ class MealsInDayViewModel(private val database: Database, private val date: Stri
             mealSections = emptyList(),
             mealDescription = "",
             totalCalories = 0,
-            mealAddedError = MealAddedError.NONE
+            mealAddedError = false
         )
     )
 
@@ -71,7 +71,9 @@ class MealsInDayViewModel(private val database: Database, private val date: Stri
             is MealsInDayIntent.AddMeal -> addNewMeal(userIntent.desc)
             is MealsInDayIntent.GetAllMeals -> getAllMeals()
             is MealsInDayIntent.ErrorMessageDismissed -> {
-                println("Error Message Dismissed")
+                _mealsInDayState.value = _mealsInDayState.value.copy(
+                    mealAddedError = false
+                )
             }
         }
     }
@@ -143,6 +145,7 @@ class MealsInDayViewModel(private val database: Database, private val date: Stri
         }
     }
 
+    // Used when there is an error
     private fun removeMeal(indexToDelete: Int) {
         val currentMeals = currentViewState().meals
 
@@ -153,7 +156,8 @@ class MealsInDayViewModel(private val database: Database, private val date: Stri
         _mealsInDayState.value = _mealsInDayState.value.copy(
             meals = updatedMeals,
             mealSections = groupMealsByTimeDifference(updatedMeals),
-            totalCalories = getTotalCalories(updatedMeals)
+            totalCalories = getTotalCalories(updatedMeals),
+            mealAddedError = true
         )
     }
 
@@ -221,7 +225,7 @@ data class MealsInDayState(
     val mealDescription: String,
     val totalCalories: Int,
 
-    val mealAddedError: MealAddedError
+    val mealAddedError: Boolean
 )
 
 sealed class MealsInDayIntent {
@@ -230,9 +234,6 @@ sealed class MealsInDayIntent {
     data object ErrorMessageDismissed: MealsInDayIntent()
 }
 
-enum class MealAddedError {
-    NONE, ERROR
-}
 
 data class MealSection(val meals: List<MealCaloriesDesc>, val sectionName: String) {
     fun totalCalories(): Int {

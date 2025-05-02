@@ -76,6 +76,16 @@ struct DayMealsView: View {
                 .task {
                     await viewModel.activate()
                 }
+                .alert("Error Occured", isPresented: $viewModel.showAlertError, ) {
+                    Button(role: .cancel) {
+                        viewModel.model.processUserIntents(userIntent: MealsInDayIntent.ErrorMessageDismissed())
+                    } label: {
+                        Text("Ok")
+                    }
+                } message: {
+                    Text("An error occured, have you added a real meal?")
+                }
+            
         } else {
             // Fallback on earlier versions
             Text("Hello, World!")
