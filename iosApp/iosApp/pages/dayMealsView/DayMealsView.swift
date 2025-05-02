@@ -74,9 +74,19 @@ struct DayMealsView: View {
                 }
                 // Onboarding
                 .sheet(isPresented: $viewModel.showSheet) {
-                    OnboardingSheetView(sheetPoint: Int(viewModel.state.sheetPoint), advanceAction: {
-                        viewModel.model.processUserIntents(userIntent: MealsInDayIntent.AdvanceOnBoarding())
-                    })
+                    OnboardingSheetView(
+                        sheetPoint: Int(viewModel.state.sheetPoint),
+                        advanceAction: {
+                            viewModel.model.processUserIntents(userIntent: MealsInDayIntent.AdvanceOnBoarding())
+                        },
+                        saveOnBoardingData:  { gender, weight, build, selectedCountry in
+                            
+                            viewModel.model.processUserIntents(userIntent: MealsInDayIntent.SaveOnBoardingData(gender: gender, weight: Int32(weight), build: build, selectedCountry: selectedCountry));
+                        },
+                        closeOnBoarding: {
+                            viewModel.model.processUserIntents(userIntent: MealsInDayIntent.CloseOnBoarding())
+                        }
+                    )
                 }
                 .alert("Error Occured", isPresented: $viewModel.showAlertError, ) {
                     Button(role: .cancel) {

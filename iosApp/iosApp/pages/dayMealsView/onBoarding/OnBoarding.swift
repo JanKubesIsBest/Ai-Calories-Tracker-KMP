@@ -12,6 +12,8 @@ import Shared
 struct OnboardingSheetView: View {
     let sheetPoint: Int
     let advanceAction: () -> Void
+    let saveOnBoardingData: (String, Int, String, String) -> Void
+    let closeOnBoarding: () -> Void
     
     private let impactFeedback = UIImpactFeedbackGenerator(style: .medium)
     
@@ -47,8 +49,15 @@ struct OnboardingSheetView: View {
                         .animation(.easeInOut(duration: 0.5), value: sheetPoint)
                     
                     // Third Sheet (sheetPoint == 2)
-                    Sheet3(saveAction: {_,_,_,_ in
+                    Sheet3(saveAction: {gender, weight, build, selectedCountry in
+
+                        let safeGender = gender ?? "Not specified"
+                        let safeWeight = weight ?? 0
+                        let safeBuild = build ?? "Not specified"
+                        let safeCountry = selectedCountry ?? "Not specified"
+                        
                         // Here will be the actual logic
+                        saveOnBoardingData(safeGender, safeWeight, safeBuild, safeCountry)
                         impactFeedback.impactOccurred()
                         advanceAction()
                     })
@@ -58,6 +67,7 @@ struct OnboardingSheetView: View {
                     
                     Sheet4(dismissAction: {
                         impactFeedback.impactOccurred()
+                        closeOnBoarding()
                     })
                         .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
                         .offset(x: sheetPoint >= 3 ? 0 : UIScreen.main.bounds.width)

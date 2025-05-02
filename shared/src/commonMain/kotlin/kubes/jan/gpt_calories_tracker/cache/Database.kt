@@ -1,6 +1,7 @@
 package kubes.jan.gpt_calories_tracker.cache
 
 import kubes.jan.gpt_calories_tracker.database.entity.MealCaloriesDesc
+import kubes.jan.gpt_calories_tracker.database.entity.UserInfo
 
 
 class Database(databaseDriverFactory: DriverFactory) {
@@ -50,6 +51,31 @@ class Database(databaseDriverFactory: DriverFactory) {
 
     internal fun deleteMealById(id: Int) {
         println(dbQuery.deleteMealById(id.toLong()))
+    }
+
+    internal fun addUserData(userInfo: UserInfo) {
+        var weight = 0
+        if (userInfo.weight != null) {
+            weight =  userInfo.weight.toInt()
+        }
+
+        dbQuery.insertUserInfo(userInfo.gender, weight.toLong(), userInfo.build, userInfo.country)
+    }
+
+    internal fun getUserInfo(): UserInfo {
+        val info = dbQuery.selectUserInfo().executeAsOne()
+
+        var weight = 0
+        if (info.weight != null) {
+            weight = info.weight.toInt()
+        }
+
+        return UserInfo(
+            gender = info.gender,
+            weight = weight,
+            build = info.build,
+            country = info.country
+        )
     }
 }
 

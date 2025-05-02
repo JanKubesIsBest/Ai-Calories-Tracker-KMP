@@ -7,6 +7,14 @@ CREATE TABLE Meals (
     total_calories INTEGER NOT NULL
 );
 
+CREATE TABLE UserInfo (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    gender TEXT,
+    weight INTEGER,
+    build TEXT,
+    country TEXT );
+
+
 insertMeal:
 INSERT INTO Meals(heading, description, date, user_description, total_calories) VALUES (?, ?, ?, ?, ?);
 
@@ -35,3 +43,9 @@ SET
   user_description = ?,
   total_calories = ?
 WHERE id = ?;
+
+insertUserInfo:
+INSERT INTO UserInfo (gender, weight, build, country) VALUES (?, ?, ?, ?);
+
+selectUserInfo:
+SELECT * FROM UserInfo LIMIT 1;

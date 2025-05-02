@@ -15,6 +15,7 @@ import kotlinx.datetime.toLocalDateTime
 import kubes.jan.gpt_calories_tracker.cache.Database
 import kubes.jan.gpt_calories_tracker.database.entity.MealCaloriesDesc
 import kubes.jan.gpt_calories_tracker.database.entity.MealCaloriesDescGPT
+import kubes.jan.gpt_calories_tracker.database.entity.UserInfo
 import kubes.jan.gpt_calories_tracker.model.view_model.app_view_model.AppViewModel
 import kubes.jan.gpt_calories_tracker.model.view_model.app_view_model.Event
 import org.koin.core.component.KoinComponent
@@ -78,10 +79,19 @@ class MealsInDayViewModel(private val database: Database, private val date: Stri
                 )
             }
 
-            MealsInDayIntent.AdvanceOnBoarding -> {
+            is MealsInDayIntent.AdvanceOnBoarding -> {
                 val currentSheetPoint = _mealsInDayState.value.sheetPoint
                 _mealsInDayState.value = _mealsInDayState.value.copy(
                     sheetPoint = currentSheetPoint + 1
+                )
+            }
+
+            is MealsInDayIntent.SaveOnBoardingData -> saveOnBoardingData(userIntent.gender, userIntent.weight, userIntent.build, userIntent.selectedCountry)
+
+            is MealsInDayIntent.CloseOnBoarding -> {
+                println("Close onboarding")
+                _mealsInDayState.value = _mealsInDayState.value.copy(
+                    showSheet = false
                 )
             }
         }
@@ -184,6 +194,17 @@ class MealsInDayViewModel(private val database: Database, private val date: Stri
         )
     }
 
+    private fun saveOnBoardingData(gender: String, weight: Int, build: String, selectedCountry: String) {
+        database.addUserData(UserInfo(
+            gender = gender,
+            weight = weight,
+            build = build,
+            country = selectedCountry
+        ))
+
+        println("Saved info: " + database.getUserInfo())
+    }
+
     companion object {
         fun groupMealsByTimeDifference(meals: List<MealCaloriesDesc>): List<MealSection> {
             val sortedMeals = meals.sortedBy { Instant.parse(it.date) }
@@ -257,7 +278,10 @@ sealed class MealsInDayIntent {
     data class AddMeal(val desc: String) : MealsInDayIntent()
     data object GetAllMeals : MealsInDayIntent()
     data object ErrorMessageDismissed: MealsInDayIntent()
+
     data object AdvanceOnBoarding: MealsInDayIntent()
+    data class SaveOnBoardingData(val gender: String, val weight: Int, val build: String, val selectedCountry: String): MealsInDayIntent()
+    data object CloseOnBoarding: MealsInDayIntent()
 }
 
 

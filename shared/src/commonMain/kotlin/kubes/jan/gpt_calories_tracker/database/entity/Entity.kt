@@ -32,3 +32,12 @@ data class MealCaloriesDescGPT(
     @SerialName("total_calories")
     val totalCalories: Int,
 )
+
+@Serializable
+data class UserInfo(
+    val id: Long? = null,
+    val gender: String? = null,
+    val weight: Int? = null,
+    val build: String? = null,
+    val country: String? = null
+)
