@@ -69,12 +69,15 @@ struct DayMealsView: View {
                         .padding(.horizontal, 10)
                     }
                 }
-                .onAppear {
-                    // There will be a function viewModel.showOnLoading()
-//                    shouldPresentSheet = false
-                }
                 .task {
                     await viewModel.activate()
+                }
+                // Onboarding
+                .sheet(isPresented: $viewModel.showSheet) {
+                    VStack {
+                        Text("Sheet")
+                    }
+                    .interactiveDismissDisabled()
                 }
                 .alert("Error Occured", isPresented: $viewModel.showAlertError, ) {
                     Button(role: .cancel) {

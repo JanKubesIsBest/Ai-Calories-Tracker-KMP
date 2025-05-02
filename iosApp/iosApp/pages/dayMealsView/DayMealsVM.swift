@@ -16,6 +16,8 @@ class DayMealsVM: ObservableObject {
     private let db: Database
     
     @Published var showAlertError = false
+    @Published var showSheet = false
+    
     
     init(date: String) {
         self.db = Database(databaseDriverFactory: driverFactory)
@@ -23,7 +25,7 @@ class DayMealsVM: ObservableObject {
     }
     
     @Published
-    private(set) var state: MealsInDayState = MealsInDayState(meals: [], mealSections: [], mealDescription: "", totalCalories: 0, mealAddedError: false)
+    private(set) var state: MealsInDayState = MealsInDayState(meals: [], mealSections: [], mealDescription: "", totalCalories: 0, mealAddedError: false, showSheet: false)
     
     @MainActor
     func activate() async {
@@ -32,6 +34,7 @@ class DayMealsVM: ObservableObject {
             
             print(self.state.mealAddedError)
             self.showAlertError = self.state.mealAddedError
+            self.showSheet = self.state.showSheet
             
         }
     }

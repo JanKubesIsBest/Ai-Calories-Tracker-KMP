@@ -31,14 +31,15 @@ class MealsInDayViewModel(private val database: Database, private val date: Stri
             mealSections = emptyList(),
             mealDescription = "",
             totalCalories = 0,
-            mealAddedError = false
+            mealAddedError = false,
+            showSheet = false
         )
     )
 
     val mealsInDayState: StateFlow<MealsInDayState> = _mealsInDayState.asStateFlow()
 
     init {
-        println("INIT MealsInDayViewModel")
+        checkFirstTime()
         getAllMeals()
 
         viewModelScope.launch {
@@ -161,6 +162,20 @@ class MealsInDayViewModel(private val database: Database, private val date: Stri
         )
     }
 
+    private fun checkFirstTime() {
+        val newMeals = database.getAllMeals()
+//        if (newMeals.isEmpty()) {
+//            // Is there for the first time
+//            _mealsInDayState.value = _mealsInDayState.value.copy(
+//                showSheet = true
+//            )
+//        }
+        // Testing
+        _mealsInDayState.value = _mealsInDayState.value.copy(
+            showSheet = true
+        )
+    }
+
     companion object {
         fun groupMealsByTimeDifference(meals: List<MealCaloriesDesc>): List<MealSection> {
             val sortedMeals = meals.sortedBy { Instant.parse(it.date) }
@@ -225,7 +240,8 @@ data class MealsInDayState(
     val mealDescription: String,
     val totalCalories: Int,
 
-    val mealAddedError: Boolean
+    val mealAddedError: Boolean,
+    val showSheet: Boolean,
 )
 
 sealed class MealsInDayIntent {
