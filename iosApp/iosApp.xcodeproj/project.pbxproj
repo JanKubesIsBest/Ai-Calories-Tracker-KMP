@@ -31,6 +31,7 @@
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
 		EADB22B92D39B56D00517F82 /* menu */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = menu; sourceTree = "<group>"; };
+		EAE9E9A52DC4C6FB0085BBF0 /* onBoarding */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = onBoarding; sourceTree = "<group>"; };
 /* End PBXFileSystemSynchronizedRootGroup section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -109,10 +110,11 @@
 		EAA1DAB92CFA2D1B00FCBBAA /* dayMealsView */ = {
 			isa = PBXGroup;
 			children = (
-				EA7193A02DC4A8E800440568 /* DayMealsVM.swift */,
+				EAE9E9A52DC4C6FB0085BBF0 /* onBoarding */,
 				EAA1DABA2CFA2D1F00FCBBAA /* detailMeal */,
 				EA511B3C2CE00DBB0047C08D /* CalorieItem.swift */,
 				7555FF82242A565900829871 /* DayMealsView.swift */,
+				EA7193A02DC4A8E800440568 /* DayMealsVM.swift */,
 			);
 			path = dayMealsView;
 			sourceTree = "<group>";
@@ -143,6 +145,7 @@
 			);
 			fileSystemSynchronizedGroups = (
 				EADB22B92D39B56D00517F82 /* menu */,
+				EAE9E9A52DC4C6FB0085BBF0 /* onBoarding */,
 			);
 			name = iosApp;
 			packageProductDependencies = (

@@ -74,10 +74,9 @@ struct DayMealsView: View {
                 }
                 // Onboarding
                 .sheet(isPresented: $viewModel.showSheet) {
-                    VStack {
-                        Text("Sheet")
-                    }
-                    .interactiveDismissDisabled()
+                    OnboardingSheetView(sheetPoint: Int(viewModel.state.sheetPoint), advanceAction: {
+                        viewModel.model.processUserIntents(userIntent: MealsInDayIntent.AdvanceOnBoarding())
+                    })
                 }
                 .alert("Error Occured", isPresented: $viewModel.showAlertError, ) {
                     Button(role: .cancel) {

@@ -25,7 +25,7 @@ class DayMealsVM: ObservableObject {
     }
     
     @Published
-    private(set) var state: MealsInDayState = MealsInDayState(meals: [], mealSections: [], mealDescription: "", totalCalories: 0, mealAddedError: false, showSheet: false)
+    private(set) var state: MealsInDayState = MealsInDayState(meals: [], mealSections: [], mealDescription: "", totalCalories: 0, mealAddedError: false, showSheet: false, sheetPoint: 0)
     
     @MainActor
     func activate() async {

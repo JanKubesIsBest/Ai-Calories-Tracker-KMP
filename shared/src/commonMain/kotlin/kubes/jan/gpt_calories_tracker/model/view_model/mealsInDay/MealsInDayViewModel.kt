@@ -32,7 +32,8 @@ class MealsInDayViewModel(private val database: Database, private val date: Stri
             mealDescription = "",
             totalCalories = 0,
             mealAddedError = false,
-            showSheet = false
+            showSheet = false,
+            sheetPoint = 0
         )
     )
 
@@ -74,6 +75,13 @@ class MealsInDayViewModel(private val database: Database, private val date: Stri
             is MealsInDayIntent.ErrorMessageDismissed -> {
                 _mealsInDayState.value = _mealsInDayState.value.copy(
                     mealAddedError = false
+                )
+            }
+
+            MealsInDayIntent.AdvanceOnBoarding -> {
+                val currentSheetPoint = _mealsInDayState.value.sheetPoint
+                _mealsInDayState.value = _mealsInDayState.value.copy(
+                    sheetPoint = currentSheetPoint + 1
                 )
             }
         }
@@ -242,12 +250,14 @@ data class MealsInDayState(
 
     val mealAddedError: Boolean,
     val showSheet: Boolean,
+    val sheetPoint: Int
 )
 
 sealed class MealsInDayIntent {
     data class AddMeal(val desc: String) : MealsInDayIntent()
     data object GetAllMeals : MealsInDayIntent()
     data object ErrorMessageDismissed: MealsInDayIntent()
+    data object AdvanceOnBoarding: MealsInDayIntent()
 }
 
 
