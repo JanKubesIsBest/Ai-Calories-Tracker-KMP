@@ -20,7 +20,7 @@ struct OnboardingSheetView: View {
     
     var body: some View {
         VStack (spacing: 0) {
-            Text("Welcome to GPT-Calories!")
+            Text("Welcome to Calories Tracker!")
                 .font(.title2)
                 .fontWeight(.bold)
                 .padding(.top, 20)
@@ -211,6 +211,14 @@ struct Sheet2: View {
                 .opacity(animateLeftImage ? 1 : 0)
                 .rotationEffect(.degrees(15))
             
+            Image("RightImageOnBoarding")
+                .resizable()
+                .scaledToFit()
+                .frame(height: 330)
+                .offset(x: animateRightImage ? 100 : 260)
+                .opacity(animateRightImage ? 1 : 0)
+                .rotationEffect(.degrees(-15))
+            
             VStack(alignment: .leading) {
                 // Main text (not animated)
                 Text("Get calories with one sentence!")
@@ -221,6 +229,7 @@ struct Sheet2: View {
                 // Subtitle (not animated)
                 Text("Add Meal → Describe the things you ate or drank → Save!")
                     .font(.body)
+                    .fontWeight(.bold)
                 
                 Spacer()
                 // Animated button
@@ -244,14 +253,6 @@ struct Sheet2: View {
                 .offset(y: animateBottomImage ? 0 : 100)
                 .opacity(animateBottomImage ? 1 : 0)
             }
-            
-            Image("RightImageOnBoarding")
-                .resizable()
-                .scaledToFit()
-                .frame(height: 330)
-                .offset(x: animateRightImage ? 100 : 260)
-                .opacity(animateRightImage ? 1 : 0)
-                .rotationEffect(.degrees(-15))
         }
         .padding()
         .padding(.top, 0)
