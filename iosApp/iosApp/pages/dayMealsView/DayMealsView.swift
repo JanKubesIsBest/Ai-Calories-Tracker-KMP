@@ -13,94 +13,90 @@ struct DayMealsView: View {
     }
     
     var body: some View {
-        if #available(iOS 16.0, *) {
+        VStack {
+            if isKeyboardVisible {
                 VStack {
-                    if isKeyboardVisible {
-                        VStack {
-                            MealList(sections: viewModel.state.mealSections)
-                        }
-                        .navigationTitle("Total Calories: " + String(viewModel.state.totalCalories))
-                        .navigationBarTitleDisplayMode(.large)
-                        .onTapGesture {
-                            self.endTextEditing()
-                            print("Tap gesture: " + isKeyboardVisible.description)
-                            // If keyboard is visible
-                            isKeyboardVisible = false
-                            isTextFieldFocused = false
-                        }
-                    } else {
-                        VStack {
-                            MealList(sections: viewModel.state.mealSections)
-                        }
-                        .navigationTitle("Total Calories: " + String(viewModel.state.totalCalories))
-                        .navigationBarTitleDisplayMode(.large)
-                    }
+                    MealList(sections: viewModel.state.mealSections)
+                }
+                .navigationTitle("Total Calories: " + String(viewModel.state.totalCalories))
+                .navigationBarTitleDisplayMode(.large)
+                .onTapGesture {
+                    self.endTextEditing()
+                    print("Tap gesture: " + isKeyboardVisible.description)
+                    // If keyboard is visible
+                    isKeyboardVisible = false
+                    isTextFieldFocused = false
+                }
+            } else {
+                VStack {
+                    MealList(sections: viewModel.state.mealSections)
+                }
+                .navigationTitle("Total Calories: " + String(viewModel.state.totalCalories))
+                .navigationBarTitleDisplayMode(.large)
+            }
+            VStack {
+                if isKeyboardVisible {
                     
-                    if isKeyboardVisible {
-                        VStack {
-                            MealInputView(text: $newMeal, onSubmit: {_ in
-                                withAnimation {
-                                    self.endTextEditing()
-                                    isKeyboardVisible = false
-                                }
-                                
-                                if (newMeal.isEmpty) {
-                                    return
-                                } else {
-                                    viewModel.model.processUserIntents(userIntent: MealsInDayIntent.AddMeal(desc: newMeal))
-                                    newMeal = ""
-                                }
-                            })
+                    MealInputView(text: $newMeal, onSubmit: {_ in
+                        withAnimation {
+                            self.endTextEditing()
+                            isKeyboardVisible = false
                         }
-                    } else {
-                        Button(action: {
-                            withAnimation {
-                                isKeyboardVisible = true
-                            }
-                        }) {
-                            Text("Add Meal")
-                                .padding()
-                                .frame(maxWidth: .infinity)
-                                .background(Color.blue)
-                                .foregroundColor(.white)
-                                .cornerRadius(8)
-                                .padding(.bottom, 20)
+                        
+                        if (newMeal.isEmpty) {
+                            return
+                        } else {
+                            viewModel.model.processUserIntents(userIntent: MealsInDayIntent.AddMeal(desc: newMeal))
+                            newMeal = ""
                         }
-                        .padding(.horizontal, 10)
+                    })
+                    
+                } else {
+                    Button(action: {
+                        withAnimation {
+                            isKeyboardVisible = true
+                        }
+                    }) {
+                        Text("Add Meal")
+                            .padding()
+                            .frame(maxWidth: .infinity)
+                            .background(Color.blue)
+                            .foregroundColor(.white)
+                            .cornerRadius(8)
+                            .padding(.bottom, 20)
                     }
+                    .padding(.horizontal, 10)
                 }
-                .task {
-                    await viewModel.activate()
+            }
+            .defaultScrollAnchor(.bottom)
+        }
+        .task {
+            await viewModel.activate()
+        }
+        // Onboarding
+        .sheet(isPresented: $viewModel.showSheet) {
+            OnboardingSheetView(
+                sheetPoint: Int(viewModel.state.sheetPoint),
+                advanceAction: {
+                    viewModel.model.processUserIntents(userIntent: MealsInDayIntent.AdvanceOnBoarding())
+                },
+                saveOnBoardingData:  { gender, weight, build, selectedCountry in
+                    
+                    viewModel.model.processUserIntents(userIntent: MealsInDayIntent.SaveOnBoardingData(gender: gender, weight: Int32(weight), build: build, selectedCountry: selectedCountry));
+                },
+                closeOnBoarding: {
+                    viewModel.model.processUserIntents(userIntent: MealsInDayIntent.CloseOnBoarding())
                 }
-                // Onboarding
-                .sheet(isPresented: $viewModel.showSheet) {
-                    OnboardingSheetView(
-                        sheetPoint: Int(viewModel.state.sheetPoint),
-                        advanceAction: {
-                            viewModel.model.processUserIntents(userIntent: MealsInDayIntent.AdvanceOnBoarding())
-                        },
-                        saveOnBoardingData:  { gender, weight, build, selectedCountry in
-                            
-                            viewModel.model.processUserIntents(userIntent: MealsInDayIntent.SaveOnBoardingData(gender: gender, weight: Int32(weight), build: build, selectedCountry: selectedCountry));
-                        },
-                        closeOnBoarding: {
-                            viewModel.model.processUserIntents(userIntent: MealsInDayIntent.CloseOnBoarding())
-                        }
-                    )
-                }
-                .alert("Error Occured", isPresented: $viewModel.showAlertError, ) {
-                    Button(role: .cancel) {
-                        viewModel.model.processUserIntents(userIntent: MealsInDayIntent.ErrorMessageDismissed())
-                    } label: {
-                        Text("Ok")
-                    }
-                } message: {
-                    Text("An error occured, have you added a real meal?")
-                }
-            
-        } else {
-            // Fallback on earlier versions
-            Text("Hello, World!")
+            )
+        }
+        .alert("Error Occured", isPresented: $viewModel.showAlertError, ) {
+            Button(role: .cancel) {
+                viewModel.model.processUserIntents(userIntent: MealsInDayIntent.ErrorMessageDismissed())
+            } label: {
+                Text("Ok")
+            }
+        } message: {
+            Text("An error occured, have you added a real meal?")
         }
     }
 }
