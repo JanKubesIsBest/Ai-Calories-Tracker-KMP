@@ -8,6 +8,8 @@ There are two reasons I started developing this app:
 * **Explore the possibilities of using LLMs to track your calorie intake.**
     * Although taking pictures of your food, as explored by many apps already, might seem easier at first, the text experience feels not only more private but also allows for more description for the model to assess the total calorie count.
 
+** App is avaiable to download [here]([url](https://apps.apple.com/cz/app/calories-tracker-by-jan/id6744899705) **
+
 ## App Overview - Project Design
 
 Although this is a project I am working on alongside school and other smaller projects, I think it is much better to have basic designs in Figma. This allowed me to assess whether I really wanted to work on it.
@@ -78,5 +80,3 @@ if isKeyboardVisible {
 ```
 
 As you can see, the only *"logic"* here is adding a new meal. This is achieved through the function `viewModel.processUserIntents(userIntent: MealsInDayIntent.AddMeal(desc: newMeal))`, which sends a signal to the view model: *"Hey, I'm adding a new meal."* Everything else is then handled by the shared side of the application — **Kotlin Multiplatform is simply beautiful!**
-
-That's about it. One day, I plan to upload the app to the App Store, so stay tuned! 🚀
