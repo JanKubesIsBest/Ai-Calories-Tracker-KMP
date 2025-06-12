@@ -8,7 +8,7 @@ There are two reasons I started developing this app:
 * **Explore the possibilities of using LLMs to track your calorie intake.**
     * Although taking pictures of your food, as explored by many apps already, might seem easier at first, the text experience feels not only more private but also allows for more description for the model to assess the total calorie count.
 
-** App is avaiable to download [here]([url](https://apps.apple.com/cz/app/calories-tracker-by-jan/id6744899705) **
+**App is avaiable to download [here](https://apps.apple.com/cz/app/calories-tracker-by-jan/id6744899705)**
 
 ## App Overview - Project Design
 
